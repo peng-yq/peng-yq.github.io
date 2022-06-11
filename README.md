@@ -4,7 +4,7 @@
 
 ## [Manual_CN](https://github.com/peng-yq/peng-yq.github.io/blob/main/_doc/Manual_zh.md)👈
 
-## [Manual_EN](https://github.com/peng-yq/peng-yq.github.io/blob/main/_doc/Manual_eh.md)👈
+## [Manual_EN](https://github.com/peng-yq/peng-yq.github.io/blob/main/_doc/Manual_en.md)👈
 
 本博客将主要用于记录在学习过程中的笔记和感想，此外还包括对数码产品的评测以及人文思考
 
