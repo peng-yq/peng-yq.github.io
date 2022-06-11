@@ -4,6 +4,7 @@
 - 👨🏻‍🎓 I am currently studying at [Hainanu](https://ha.hainanu.edu.cn/home2020/), a senior year, majoring in computer science.
 - 🎓 I will go to study in [Institute of Information Engineering (IIE)](http://www.iie.ac.cn/), [University of Chinese Academy of Sciences (UCAS)](https://www.ucas.ac.cn/ ) this year.
 - ⚽ I am a football lover, I like to watch and play football. And also I am a diehard fan of Cristiano Ronaldo.
+- [CV_CN](https://github.com/peng-yq/peng-yq.github.io/raw/main/pdf/CV_CN.pdf)
 
 #### **🚀 Hobbies and Interests**
 
