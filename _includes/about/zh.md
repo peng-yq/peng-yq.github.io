@@ -34,4 +34,4 @@
 
 - Gmail: [eilo.pengyq@gmail.com](mailto:eilo.pengyq@gmail.com)
 - Foxmail: [eilo.pengyq@foxmail.com](mailto:eilo.pengyq@foxmail.com)
-- Outlook: [eilo.pengyq@outlook.com](mailto:eilo.pengyq@outlook.com)
+
