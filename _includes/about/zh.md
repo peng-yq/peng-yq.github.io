@@ -4,6 +4,7 @@
 - 👨🏻‍🎓 我目前就读于[海南大学 (Hainanu)](https://ha.hainanu.edu.cn/home2020/)，大四，计算机类专业。
 - 🎓 我下半年将前往[信息工程研究所 (IIE)](http://www.iie.ac.cn/)，[中国科学院大学 (UCAS)](https://www.ucas.ac.cn/)攻读硕士。
 - ⚽ 我是一名足球爱好者，喜欢看球、踢球，是C罗的死忠粉。
+- [CV_CN](https://peng-yq.github.io/pdf/CV_CN.pdf)
 
 #### **🚀 爱好和兴趣**
 
