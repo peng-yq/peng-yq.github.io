@@ -2,6 +2,8 @@
 
 ![image-20220611131628941](https://cdn.jsdelivr.net/gh/peng-yq/Gallery/img/202206111316495.png)
 
+## [Manual](_doc/Manual_zh.md)👈
+
 本博客将主要用于记录在学习过程中的笔记和感想，此外还包括对数码产品的评测以及人文思考
 
  [PYQ的另一个博客](https://pengyq.top)（powered by [Notion](https://www.notion.so/)，主要用于记录生活、娱乐和收藏，⚠️Notion在国内访问很慢，有魔法的话速度会快很多）
