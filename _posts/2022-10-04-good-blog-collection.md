@@ -17,3 +17,7 @@ tags:
 - [The Missing Semester中译](https://missing-semester-cn.github.io/)
 - [Git介绍和内容寻址文件系统](https://linianhui.github.io/git/)
 - [Curl命令](https://www.ruanyifeng.com/blog/2019/09/curl-reference.html)
+
+## Computer Architecture
+
+- [CPU三级Cache](https://zhuanlan.zhihu.com/p/461548456)
