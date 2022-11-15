@@ -21,3 +21,17 @@ tags:
 ## Computer Architecture
 
 - [CPU三级Cache](https://zhuanlan.zhihu.com/p/461548456)
+
+## Operating Systems
+
+- [通过fork函数来看Linux内存规划](https://blog.csdn.net/lingshengxueyuan/article/details/125007995)
+- [为什么Linux内核常用unsigned long来代替指针](https://blog.csdn.net/Rong_Toa/article/details/109693379)
+- [Linux中逻辑地址、线性地址和物理地址的转换(有示例带入计算)](https://developer.aliyun.com/article/847047)
+- [Linux 下 “一切皆文件” 思想的本质和好处在哪里？与 Windows 下的文件管理思想有啥差别？](https://www.zhihu.com/question/25696682/answer/31595790)
+
+## Others
+
+- [C语言宏函数](https://blog.csdn.net/li1829146612/article/details/123319184?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-123319184-blog-77089651.pc_relevant_recovery_v2&spm=1001.2101.3001.4242.1&utm_relevant_index=3)
+- [宏函数和内联函数](https://blog.csdn.net/u012611878/article/details/78996349)
+- [C/C++ 中 volatile 关键字详解](https://www.runoob.com/w3cnote/c-volatile-keyword.html)
+- [C语言正确使用extern关键字](https://blog.csdn.net/xingjiarong/article/details/47656339)
