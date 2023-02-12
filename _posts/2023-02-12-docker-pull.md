@@ -7,7 +7,7 @@ header-mask: 0.3
 mathjax: true
 catalog: true
 tags:
-  - Linux
+  - docker
 ---
 Docker Pull速度慢首先考虑网络的问题！！！如果一直不动或者极慢甚至TLS连接都建立失败，那大概率就是网络的问题了，考虑换个网络试试。
 

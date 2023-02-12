@@ -8,7 +8,7 @@ header-mask: 0.3
 mathjax: true
 catalog: true
 tags:
-  - linux
+  - Linux
   - C/C++
 ---
 
