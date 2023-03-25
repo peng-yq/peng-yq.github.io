@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "「数据结构」两栈共享存储空间"
-subtitle: "「Data Structre」Two Stacks Share Storage Space"
+title: "【数据结构】两栈共享存储空间"
+subtitle: "[Data Structre] Two Stacks Share Storage Space"
 author: "PYQ"
 header-img: "img/post-bg-ds.jpg"
 header-mask: 0.3

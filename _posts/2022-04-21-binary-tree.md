@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "「数据结构」二叉树的定义、存储结构和遍历"
-subtitle: "「Data Structre」Definition, Structure and Traversal of Binary Tree"
+title: "【数据结构】二叉树的定义、存储结构和遍历"
+subtitle: "[Data Structre] Definition, Structure and Traversal of Binary Tree"
 author: "PYQ"
 header-img: "img/post-bg-ds.jpg"
 header-mask: 0.3

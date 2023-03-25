@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "「数据结构」循环队列"
-subtitle: "「Data Structre」Circular Queue"
+title: "【数据结构】循环队列"
+subtitle: "[Data Structre] Circular Queue"
 author: "PYQ"
 header-img: "img/post-bg-ds.jpg"
 header-mask: 0.3

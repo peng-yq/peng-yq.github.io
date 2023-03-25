@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "「数据结构」静态链表"
-subtitle: "「Data Structre」Static Link List"
+title: "【数据结构】静态链表"
+subtitle: "[Data Structre] Static Link List"
 author: "PYQ"
 header-img: "img/post-bg-ds.jpg"
 header-mask: 0.3
