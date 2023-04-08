@@ -22,13 +22,15 @@
 2. HUAWEI  Mate 40
 3. HUAWEI  FreeBuds Pro
 4. HUAWEI  Band6
-5. Apple  iPad 2020
-6. Apple iPhone 5C
-7. Apple iPhone SE
-8. FL  980
-9. Logitech  G102 ( Purple )
-10. Logitech  K380 ( Red)
-11. Logitech  M590
+5. HUAWEI  Watch GT 42mm
+6. Apple  iPad 2020
+7. Apple iPhone 5C
+8. Apple iPhone SE
+9. FL  980
+10. Logitech  G102 ( Purple )
+11. Logitech  K380 ( Red)
+12. Logitech  M590
+13. OPPO Enco x
 
 #### **💌 联系我**
 
