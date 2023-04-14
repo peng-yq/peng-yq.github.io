@@ -22,7 +22,7 @@
 2. HUAWEI  Mate 40
 3. HUAWEI  FreeBuds Pro
 4. HUAWEI  Band6
-5. HUAWEI  Watch GT 42mm
+5. HUAWEI  Watch GT2 42mm
 6. Apple  iPad 2020
 7. Apple iPhone 5C
 8. Apple iPhone SE
