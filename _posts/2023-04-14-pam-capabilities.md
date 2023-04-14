@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "【Lab】基于PAM的用户权能分配"
-subtitle: "[xv6] PAM-based user capability distribution"
+title: "【OS Security Lab】基于PAM的用户权能分配"
+subtitle: "[OS Security Lab] PAM-based user capability distribution"
 author: "PYQ"
 header-mask: 0.3
 mathjax: true
