@@ -132,7 +132,7 @@ QEMU模拟了一台计算机，它包括从物理地址`0x80000000（KERNBASE，
 
 ## Code: Physical memory allocator
 
-> 这一部分建议看教学视频，更好li'j
+> 这一部分建议看教学视频，更好理解
 
 分配器 (allocator) 位于kalloc.c(kernel/kalloc.c:1)中，分配器的数据结构是可供分配的物理内存页的空闲列表，每个空闲页的列表元素是一个`struct run`(kernel/kalloc.c:17)。分配器从哪里获得内存来填充该数据结构呢？它将每个空闲页的`run`结构存储在空闲页本身，因为在那里没有存储其他东西。空闲列表受到自旋锁（spin lock）的保护(kernel/kalloc.c:21-24)。列表和锁被封装在一个结构体中，以明确锁在结构体中保护的字段。现在，忽略锁以及对`acquire`和`release`的调用；第6章将详细查看有关锁的细节。
 
