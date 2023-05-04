@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【MIT 6.S081】Lab 2: system calls"
+title: "MIT 6.S081—Lab 2: system calls"
 subtitle: "system calls"
 author: "PYQ"
 header-mask: 0.3

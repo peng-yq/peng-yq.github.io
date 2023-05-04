@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【LeetCode】贪心算法"
+title: "LeetCode—贪心算法"
 subtitle: "[LeetCode] Greedy Algorithm"
 author: "PYQ"
 header-mask: 0.3

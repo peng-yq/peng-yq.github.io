@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【OS Security Lab】缓冲区溢出与数据执行保护DEP"
+title: "OS Security Lab—缓冲区溢出与数据执行保护DEP"
 subtitle: "[OS Security Lab] Buffer Overflow and Data Execution Prevention (DEP)"
 author: "PYQ"
 header-mask: 0.3

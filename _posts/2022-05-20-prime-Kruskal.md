@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【数据结构】Prime算法和Kruskal算法"
+title: "数据结构—Prime算法和Kruskal算法"
 subtitle: "[Data Structre] Prime, Kruskal"
 author: "PYQ"
 header-img: "img/post-bg-ds.jpg"

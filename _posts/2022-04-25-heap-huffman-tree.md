@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【数据结构】堆、哈夫曼树"
+title: "数据结构—堆、哈夫曼树"
 subtitle: "[Data Structre] Heap, Huffman tree"
 author: "PYQ"
 header-img: "img/post-bg-ds.jpg"

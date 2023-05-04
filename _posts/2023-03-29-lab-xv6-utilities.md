@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【MIT 6.S081】Lab 1: Xv6 and Unix utilities"
+title: "MIT 6.S081—Lab 1: Xv6 and Unix utilities"
 subtitle: "Xv6 and Unix utilities"
 author: "PYQ"
 header-mask: 0.3

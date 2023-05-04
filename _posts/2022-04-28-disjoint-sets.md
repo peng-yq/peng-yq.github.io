@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【数据结构】并查集"
+title: "数据结构—并查集"
 subtitle: "[Data Structre] Disjoint Sets"
 author: "PYQ"
 header-img: "img/post-bg-ds.jpg"

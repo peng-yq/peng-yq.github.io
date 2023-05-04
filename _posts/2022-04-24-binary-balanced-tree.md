@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【数据结构】二叉搜索树、平衡二叉树"
+title: "数据结构—二叉搜索树、平衡二叉树"
 subtitle: "[Data Structre] Search Binary Tree, Balanced Binary Tree"
 author: "PYQ"
 header-img: "img/post-bg-ds.jpg"

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【xv6】操作系统架构"
+title: "xv6—操作系统架构"
 subtitle: "[xv6] Operating system organization"
 author: "PYQ"
 header-mask: 0.3

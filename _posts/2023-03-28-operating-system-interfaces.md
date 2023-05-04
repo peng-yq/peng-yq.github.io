@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【xv6】操作系统接口"
+title: "xv6—操作系统接口"
 subtitle: "[xv6] Operating system interfaces"
 author: "PYQ"
 header-mask: 0.3

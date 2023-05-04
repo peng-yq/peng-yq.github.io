@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【xv6】页表"
+title: "xv6—页表"
 subtitle: "[xv6] Page Tables"
 author: "PYQ"
 header-mask: 0.3
