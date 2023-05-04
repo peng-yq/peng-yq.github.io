@@ -614,7 +614,7 @@ pre.highlight {
   font-size: 20px;
 }
 .search-page #search-input {
-  font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   border: none;
   outline: none;
   padding: 0;
@@ -656,7 +656,7 @@ body {
      *     TypeIsBeautiful,
      *     [This Post](http://zhuanlan.zhihu.com/ibuick/20186806) etc.
      */
-  font-family: "Bitter", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", "Bitter", sans-serif;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   line-height: 1.7;
   font-size: 16px;
   color: #404040;
@@ -683,7 +683,7 @@ h6 {
      *     TypeIsBeautiful,
      *     [This Post](http://zhuanlan.zhihu.com/ibuick/20186806) etc.
      */
-  font-family: "Bitter", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", "Bitter", sans-serif;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   line-height: 1.7;
   line-height: 1.1;
   font-weight: bold;
@@ -771,7 +771,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
 }
 .postlist-container {
   margin-bottom: 15px;
@@ -983,7 +983,7 @@ samp {
      *     TypeIsBeautiful,
      *     [This Post](http://zhuanlan.zhihu.com/ibuick/20186806) etc.
      */
-  font-family: "Bitter", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", "Bitter", sans-serif;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   line-height: 1.7;
 }
 .navbar-custom .navbar-brand {
@@ -1179,7 +1179,7 @@ samp {
      *     TypeIsBeautiful,
      *     [This Post](http://zhuanlan.zhihu.com/ibuick/20186806) etc.
      */
-  font-family: "Bitter", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", "Bitter", sans-serif;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   line-height: 1.7;
   font-size: 18px;
   line-height: 1.1;
@@ -1207,7 +1207,7 @@ samp {
      *     TypeIsBeautiful,
      *     [This Post](http://zhuanlan.zhihu.com/ibuick/20186806) etc.
      */
-  font-family: "Bitter", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", "Bitter", sans-serif;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   line-height: 1.7;
   font-size: 17px;
   line-height: 1.4;
@@ -1357,7 +1357,7 @@ footer .copyright a:focus {
      *     TypeIsBeautiful,
      *     [This Post](http://zhuanlan.zhihu.com/ibuick/20186806) etc.
      */
-  font-family: "Bitter", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", "Bitter", sans-serif;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   line-height: 1.7;
   text-transform: uppercase;
   font-size: 14px;
@@ -1386,7 +1386,7 @@ footer .copyright a:focus {
      *     TypeIsBeautiful,
      *     [This Post](http://zhuanlan.zhihu.com/ibuick/20186806) etc.
      */
-  font-family: "Bitter", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", "Bitter", sans-serif;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   line-height: 1.7;
   text-transform: uppercase;
   font-size: 13px;
@@ -1573,7 +1573,7 @@ img::-moz-selection {
      *     TypeIsBeautiful,
      *     [This Post](http://zhuanlan.zhihu.com/ibuick/20186806) etc.
      */
-  font-family: "Bitter", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", "Bitter", sans-serif;
+  font-family: Georgia,Nimbus Roman No9 L,Songti SC,"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",STSong,AR PL New Sung,AR PL SungtiL GB,NSimSun,SimSun,TW\\-Sung,WenQuanYi Bitmap Song,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR PL UMing TW MBE,PMingLiU,MingLiU,serif;
   line-height: 1.7;
 }
 .mini-post-list .post-preview {
