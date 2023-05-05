@@ -270,13 +270,13 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
 
 ## Traps from kernel space
 
-xv6根据执行的是用户代码还是内核代码，对CPU陷阱寄存器的配置有所不同。当在CPU上执行内核时，内核将stvec指向kernelvec(kernel/kernelvec.S:10)的汇编代码。由于xv6已经在内核中，kernelvec可以依赖于设置为内核页表的satp，以及指向有效内核栈的栈指针。kernelvec保存所有寄存器，以便被中断的代码最终可以不受干扰地恢复。
+xv6根据执行的是用户代码还是内核代码，对CPUtrap寄存器的配置有所不同。当在CPU上执行内核代码时，内核将stvec指向kernelvec(kernel/kernelvec.S:10)的汇编代码。由于xv6已经在内核中，kernelvec可以依赖于设置为内核页表的satp，以及指向有效内核栈的栈指针。kernelvec保存所有寄存器，以便被中断的代码最终可以不受干扰地恢复。
 
 kernelvec将寄存器保存在被中断的内核线程的栈上，这是有意义的，因为寄存器值属于该线程。如果陷阱导致切换到不同的线程，那这一点就显得尤为重要——在这种情况下，陷阱将实际返回到新线程的栈上，将被中断线程保存的寄存器安全地保存在其栈上。
 
 Kernelvec在保存寄存器后跳转到kerneltrap(kernel/trap.c:134)。kerneltrap为两种类型的陷阱做好了准备：设备中断和异常。它调用devintr(kernel/trap.c:177)来检查和处理前者。如果陷阱不是设备中断，则必定是一个异常，内核中的异常将是一个致命的错误；内核调用panic并停止执行。
 
-如果由于计时器中断而调用了kerneltrap，并且一个进程的内核线程正在运行（而不是调度程序线程），kerneltrap会调用yield，给其他线程一个运行的机会。在某个时刻，其中一个线程会让步，让我们的线程和它的kerneltrap再次恢复。第7章解释了yield中发生的事情。
+如果由于计时器中断而调用了kerneltrap，并且一个进程的内核线程正在运行（而不是调度程序线程），kerneltrap会调用yield，给其他线程一个运行的机会。在某个时刻，其中一个线程会让步，让我们的线程和它的kerneltrap再次恢复。
 
 当kerneltrap的工作完成后，它需要返回到任何被陷阱中断的代码。因为一个yield可能已经破坏了保存的sepc和在sstatus中保存的前一个状态模式，因此kerneltrap在启动时保存它们。它现在恢复这些控制寄存器并返回到kernelvec(kernel/kernelvec.S:48)。kernelvec从栈中弹出保存的寄存器并执行sret，将sepc复制到pc并恢复中断的内核代码。
 
@@ -286,13 +286,29 @@ Kernelvec在保存寄存器后跳转到kerneltrap(kernel/trap.c:134)。kerneltra
 
 ## Page-fault exceptions
 
-**xv6对异常的响应相当简单： 如果用户空间中发生异常，内核将终止故障进程。如果内核中发生异常，则内核会崩溃。而现实世界真正的操作系统通常以更“有趣”的方式做出反应**。
+> 下面笔记仅对相关功能或技术进行简单原理介绍，更多详细内容见[教学视频](https://www.bilibili.com/video/BV19k4y1C7kA?p=7)或[视频图文翻译](https://mit-public-courses-cn-translatio.gitbook.io/mit6-s081/lec08-page-faults-frans/8.3-zero-fill-on-demand)
 
-**利用page fault来实现的一些技术**
+xv6对page fault的响应相当简单： 如果用户空间中发生page fault，内核将终止故障进程。如果内核中发生page fault，则内核会崩溃。而现实世界真正的操作系统通常以更“有趣”的方式做出反应。
 
-- COW fork
-- lazy allocation
-- 虚拟内存
+> 也就是说xv6对下面功能/技术都没有实现
+
+**当CPU无法将虚拟地址转换为物理地址时，CPU会生成page fault异常**。当发生page fault时，内核需要什么样的信息才能够响应page fault：
+
+- **出错的虚拟地址，或者是触发page fault的内存地址**。**当出现page fault的时候，xv6内核会打印出错的虚拟地址，并且这个地址会被保存在stval寄存器中**。所以，当一个用户应用程序触发了page fault，page fault会使用trap机制，将程序运行切换到内核，同时也会将出错的地址存放在stval寄存器中。
+
+- **出错的原因类型**。我们或许想要对不同场景的page fault有不同的响应，不同的场景是指：
+
+  - load指令触发的page fault
+
+  - store指令触发的page fault
+
+  - jump指令触发的page fault
+
+  page fault的原因存在scause寄存器中，其中总共有3个类型的原因与page fault相关，分别是读、写和指令。ECALL进入到supervisor mode对应的是8，这是我们在上节课中应该看到的SCAUSE值。基本上来说，page fault和其他的异常使用与系统调用相同的trap机制来从用户空间切换到内核空间。如果是因为page fault触发的trap机制并且进入到内核空间，stval寄存器和scause寄存器都会有相应的值。
+  
+- **触发page fault的指令的地址（程序计数器值）**。这个地址存放在sepc（Supervisor Exception Program Counter）寄存器中，并同时会保存在trapframe->epc中。
+
+### cow fork
 
 例如，许多内核使用page fault来实现copy on write (COW) fork。
 
@@ -302,15 +318,23 @@ Kernelvec在保存寄存器后跳转到kerneltrap(kernel/trap.c:134)。kerneltra
 >
 >COW Fork是一种非常有效的内存管理技术，它减少了内存使用，提高了程序的执行速度和效率。它也是进程间通信和虚拟内存管理的基石。
 
-由page fault驱动的COW fork可以使父级和子级安全地共享物理内存。**当CPU无法将虚拟地址转换为物理地址时，CPU会生成page fault异常**。RISC-V有三种不同的page fault，scause寄存器中的值指示页面错误的类型，stval寄存器包含无法翻译的地址。：
+由page fault驱动的COW fork可以使父级和子级安全地共享物理内存，COW fork中的基本计划是让父子最初共享所有物理页面，但将它们映射为只读。因此，当子级或父级执行存储指令时，RISC-V CPU引发page fault异常。为了响应此异常，内核复制了包含错误地址的页面。它在子级的地址空间中映射一个权限为读/写的副本，在父级的地址空间中映射另一个权限为读/写的副本。更新页表后，内核会在导致故障的指令处恢复故障进程的执行。由于内核已经更新了相关的PTE以允许写入，所以错误指令现在将正确执行。
 
-- 加载页面错误 (当加载指令无法转换其虚拟地址时)
-- 存储页面错误 (当存储指令无法转换其虚拟地址时) 
-- 指令页面错误 (当指令的地址无法转换时)
-
-COW fork中的基本计划是让父子最初共享所有物理页面，但将它们映射为只读。因此，当子级或父级执行存储指令时，RISC-V CPU引发page fault异常。为了响应此异常，内核复制了包含错误地址的页面。它在子级的地址空间中映射一个权限为读/写的副本，在父级的地址空间中映射另一个权限为读/写的副本。更新页表后，内核会在导致故障的指令处恢复故障进程的执行。由于内核已经更新了相关的PTE以允许写入，所以错误指令现在将正确执行。
+<img src="https://906337931-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-MHZoT2b_bcLghjAOPsJ%2F-MMidiGrWWP5Do6c9hwf%2F-MMjvLvMe8CobFN8-afp%2Fimage.png?alt=media&token=fa092f13-afdf-4891-822d-7cab88f2872f">
 
 COW策略对fork很有效，因为通常子进程会在fork之后立即调用exec，用新的地址空间替换其地址空间。在这种常见情况下，子级只会触发很少的页面错误，内核可以避免拷贝父进程内存完整的副本。此外，COW fork是透明的：无需对应用程序进行任何修改即可使其受益。
+
+**发生COW时，实际是向一个只读的页面进行写操作，内核如何能分辨现在是一个copy-on-write fork的场景，而不是应用程序在向一个正常的只读地址写数据？**
+
+内核必须要能够识别copy-on-write场景，几乎所有的page table硬件都支持了这一点。下图是一个常见的多级page table，对于PTE的标志位，最后两位RSW保留给supervisor software使用，supervisor softeware指的就是内核。内核可以随意使用这两个bit位。所以可以做的一件事情就是，将bit8标识为当前是一个copy-on-write page。
+
+<img src="https://906337931-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-MHZoT2b_bcLghjAOPsJ%2F-MMidiGrWWP5Do6c9hwf%2F-MMk2SxJ_cq94IMH6I6W%2Fimage.png?alt=media&token=e0dad55b-5c74-4da0-a3b0-a89d462eda58">
+
+关于COW还有个细节需要注意。目前在xv6中，除了trampoline page外，一个物理内存page只属于一个用户进程。trampoline page永远也不会释放，所以也不是什么大问题。但是对于这里的物理内存page，现在有多个用户进程或者说多个地址空间都指向了相同的物理内存page，举个例子，当父进程退出时我们需要更加的小心，因为我们要判断是否能立即释放相应的物理page。如果有子进程还在使用这些物理page，而内核又释放了这些物理page，我们将会出问题。那么现在释放内存page的依据是什么呢？
+
+**我们需要对于每一个物理内存page的引用进行计数，当我们释放虚拟page时，我们将物理内存page的引用数减1，如果引用数等于0，那么我们就能释放物理内存page**。
+
+### lazy allocation
 
 除COW fork以外，页表和页面错误的结合还开发出了广泛有趣的可能性。另一个广泛使用的特性叫做惰性分配——lazy allocation，使用lazy allocation技术会在进程访问虚拟内存页时触发page fault，并通过动态分配物理内存来满足进程的内存需求
 
@@ -320,5 +344,24 @@ COW策略对fork很有效，因为通常子进程会在fork之后立即调用exe
 >
 >尽管lazy allocation可以使内存使用效率更高，但是它也需要更多的系统开销来维护虚拟内存和物理内存之间的映射关系。
 
-利用page fault的另一个广泛使用的功能是虚拟内存。**如果应用程序需要比可用物理RAM更多的内存，内核可以换出一些页面： 将它们写入存储设备 (如磁盘)，并将它们的PTE标记为无效。如果应用程序读取或写入被换出的页面，则CPU将触发page fault。然后内核可以检查故障地址。如果该地址属于磁盘上的页面，则内核分配物理内存页面，将该页面从磁盘读取到该内存，将PTE更新为有效并引用该内存，然后恢复应用程序**。为了给页面腾出空间，内核可能需要换出另一个页面。此功能不需要对应用程序进行更改，并且如果应用程序具有引用的地址 (即，它们在任何给定时间仅使用其内存的子集)，则该功能可以很好地工作。
+### zero fill on demand
+
+当你查看一个用户程序的地址空间时，存在.text区域，.data区域，同时还有一个.bss区域。当编译器在生成二进制文件时，编译器会填入这三个区域：.text区域是程序的指令，.data区域存放的是初始化了的全局变量，.bss包含了未被初始化或者初始化为0的全局变量。
+在一个正常的操作系统中，如果执行exec，exec会申请地址空间，里面会存放text和data。因为bss里面保存了未被初始化的全局变量，这里或许有许多许多个page，但是所有的page内容都为0。通常可以调优的地方是，**我有如此多的内容全是0的page，在物理内存中，我只需要分配一个page，这个page的内容全是0。然后将所有虚拟地址空间的全0的page都map到这一个物理page上**，这样至少在程序启动的时候能节省大量的物理内存分配。
+
+当然这里的mapping需要非常的小心，我们不能允许对于这个page执行写操作，因为所有的虚拟地址空间page都期望page的内容是全0，所以这里的PTE都是只读的。之后在某个时间点，应用程序尝试写bss中的一个page时，比如说需要更改一两个变量的值，我们会得到page fault。那么，对于这个特定场景中的page fault我们该做什么呢？**假设store指令发生在BSS最顶端的page中。我们想要做的是，在物理内存中申请一个新的内存page，将其内容设置为0，因为我们预期这个内存的内容为0。之后我们需要更新这个page的mapping关系，首先PTE要设置成可读可写，然后将其指向新的物理page**。这里相当于更新了PTE，之后我们可以重新执行指令。
+
+<img src="https://906337931-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-MHZoT2b_bcLghjAOPsJ%2F-MMidiGrWWP5Do6c9hwf%2F-MMjR5Fl20ATXIG70FFk%2Fimage.png?alt=media&token=6d3c6a13-7fa4-4ce6-b569-ceec31fa9694">
+
+### virtual memory
+
+利用page fault的另一个广泛使用的功能是virtual memory。**如果应用程序需要比可用物理RAM更多的内存，内核可以换出一些页面： 将它们写入存储设备 (如磁盘)，并将它们的PTE标记为无效。如果应用程序读取或写入被换出的页面，则CPU将触发page fault。然后内核可以检查故障地址。如果该地址属于磁盘上的页面，则内核分配物理内存页面，将该页面从磁盘读取到该内存，将PTE更新为有效并引用该内存，然后恢复应用程序**。为了给页面腾出空间，内核可能需要换出另一个页面。此功能不需要对应用程序进行更改，并且如果应用程序具有引用的地址 (即，它们在任何给定时间仅使用其内存的子集)，则该功能可以很好地工作。
+
+###  memory mapped files
+
+**memory mapped files的核心思想是，将完整或者部分文件加载到内存中，这样就可以通过内存地址相关的load或者store指令来操纵文件**。为了支持这个功能，一个现代的操作系统会提供一个叫做mmap的系统调用。这个系统调用会接收一个虚拟内存地址（VA），长度（len），protection，一些标志位，一个打开文件的文件描述符，和偏移量（offset）。这里的语义就是，从文件描述符对应的文件的偏移量的位置开始，映射长度为len的内容到虚拟内存地址VA，同时我们需要加上一些保护，比如只读或者读写。
+
+假设文件内容是读写并且内核实现mmap的方式是eager方式（不过大部分系统都不会这么做），内核会从文件的offset位置开始，将数据拷贝到内存，设置好PTE指向物理内存的位置。之后应用程序就可以使用load或者store指令来修改内存中对应的文件内容。当完成操作之后，会有一个对应的unmap系统调用，参数是虚拟地址（VA），长度（len）。来表明应用程序已经完成了对文件的操作，在unmap时间点，我们需要将dirty block (PTE中dirty bit为1) 写回到文件中。
+
+当然，在任何聪明的内存管理机制中，所有的这些都是以lazy的方式实现。**你不会立即将文件内容拷贝到内存中，而是先记录一下这个PTE属于这个文件描述符。相应的信息通常在VMA结构体中保存，VMA全称是Virtual Memory Area**。例如对于这里的文件f，会有一个VMA，在VMA中我们会记录文件描述符，偏移量等等，这些信息用来表示对应的内存虚拟地址的实际内容在哪，这样当我们得到一个位于VMA地址范围的page fault时，内核可以从磁盘中读数据，并加载到内存中。
 
