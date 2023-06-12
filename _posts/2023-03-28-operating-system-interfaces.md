@@ -8,6 +8,7 @@ mathjax: true
 catalog: true
 tags:
   - xv6
+  - OS
 ---
 
 ## Introduction
