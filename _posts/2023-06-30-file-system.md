@@ -86,7 +86,7 @@ struct superblock {
 
 xv6使用的磁盘是virtio_disk，相关操作代码在virtio_disk.c中，就不细看了（。
 
-## Buffer cache Layer
+## Buffer Cache Layer
 
 Buffer cache主要有两个任务：
 
@@ -515,17 +515,89 @@ commit()
 }
 ```
 
+##  Block Allocator
 
+文件和目录内容存储在磁盘block中，磁盘block必须从空闲资源池中分配。xv6的块分配器在磁盘上维护一个空闲位图（bitmap），**xv6中的bitmap区只有一个block**，每一位代表一个块：0表示对应的块是空闲的；1表示它正在使用中。程序mkfs设置对应于引导扇区、超级块、日志块、inode块和位图块的比特位。
+
+块分配器提供两个功能：balloc分配一个新的磁盘块，bfree释放一个块。
+
+> 位操作给我看麻了，说实话这部分没太看明白
+
+```c
+#define BSIZE 1024  // block size
+// Bitmap bits per block
+#define BPB           (BSIZE*8) // 每个字节8位（*8还想了一会儿，难蚌，都叫“比特位”了！
+
+// Block of free map containing bit for block b
+#define BBLOCK(b, sb) ((b)/BPB + sb.bmapstart)
+
+// Zero a block.
+static void
+bzero(int dev, int bno)
+{
+  struct buf *bp;
+
+  bp = bread(dev, bno);
+  memset(bp->data, 0, BSIZE);
+  log_write(bp);
+  brelse(bp);
+}
+
+// Allocate a zeroed disk block.
+static uint
+balloc(uint dev)
+{
+  int b, bi, m;
+  struct buf *bp;
+
+  bp = 0;
+  for(b = 0; b < sb.size; b += BPB){
+    // 遍历所有block
+    bp = bread(dev, BBLOCK(b, sb));
+    // 得到当前block的位图块号
+    for(bi = 0; bi < BPB && b + bi < sb.size; bi++){
+      // bit
+      m = 1 << (bi % 8);
+      if((bp->data[bi/8] & m) == 0){  // Is block free?
+        bp->data[bi/8] |= m;  // Mark block in use.
+        log_write(bp);
+        brelse(bp);
+        bzero(dev, b + bi);
+        return b + bi;
+      }
+    }
+    brelse(bp);
+  }
+  panic("balloc: out of blocks");
+}
+
+// Free a disk block.
+static void
+bfree(int dev, uint b)
+{
+  struct buf *bp;
+  int bi, m;
+
+  bp = bread(dev, BBLOCK(b, sb));
+  bi = b % BPB;
+  m = 1 << (bi % 8);
+  if((bp->data[bi/8] & m) == 0)
+    panic("freeing free block");
+  bp->data[bi/8] &= ~m;
+  log_write(bp);
+  brelse(bp);
+}
+```
 
 ## Inode Layer
 
 接下来我们看一下磁盘上存储的inode究竟是什么？
 
 - 通常来说它有一个type字段，区分文件、目录和特殊文件（设备），type为零表示磁盘inode是空闲的
-- nlink字段，也就是link计数器，用来跟踪究竟有多少文件名指向了当前的inode
+- nlink字段，也就是link计数器，用来跟踪究竟有多少文件名指向了当前的inode，以便识别何时应释放磁盘上的inode及其数据块
 - size字段，表明了文件数据有多少个字节
-- 不同文件系统中的表达方式可能不一样，不过在xv6中接下来是一些block的编号，例如编号0，编号1，等等。xv6的inode中总共有12个block编号，这些被称为direct block number，这12个block指向了构成文件的前12个block。举个例子，如果文件只有2个字节，那么只会有一个block编号0，它包含的数字是磁盘上文件前2个字节的block的位置。
-- 之后还有一个indirect block number，它对应了磁盘上一个block，这个block包含了256（一个block number是4字节，1024/4=256）个block number，这256个block number包含了文件的数据。所以inode中block number 0到block number 11都是direct block number，而block number 12保存的indirect block number指向了另一个block。
+- 不同文件系统中的表达方式可能不一样，不过在xv6中接下来是一些block的编号，例如编号0，编号1，等等。xv6的inode中总共有12个block编号，这些被称为direct block number，这12个block指向了构成文件的前12个block。举个例子，如果文件只有2个字节，那么只会有一个block编号0，它包含的数字（data block number）是磁盘上文件前2个字节的block的位置。
+- 之后还有一个indirect block number，它对应了磁盘上一个block，这个block包含了256（一个block number是4字节（就是地址？），1024/4=256）个block number，这256个block number包含了文件的数据。所以inode中block number 0到block number 11都是direct block number，而block number 12保存的indirect block number指向了另一个block。
 
 <img src="https://906337931-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-MHZoT2b_bcLghjAOPsJ%2F-MRhzbAZwhuzp63wWdRE%2F-MRiq3PDZ1MKm5xRPATf%2Fimage.png?alt=media&token=b690c6fe-e665-4ded-adc7-91be326015d0">
 
@@ -564,12 +636,15 @@ xv6对于目录和文件的查找设计的很简单，即通过线性扫描实�
 
 ### Code
 
+inode相关的定义
+
 ```c
 #define BSIZE 1024  // block size
 #define NDIRECT 12
 #define NINDIRECT (BSIZE / sizeof(uint))
 
 // On-disk inode structure
+// 磁盘上的inode的定义，64字节
 struct dinode {
   short type;           // File type
   short major;          // Major device number (T_DEVICE only)
@@ -578,95 +653,391 @@ struct dinode {
   uint size;            // Size of file (bytes)
   uint addrs[NDIRECT+1];   // Data block addresses
 };
-// 磁盘上的inode的定义，64字节
-```
 
-```c
-struct superblock sb; 
+// in-memory copy of an inode
+// 内存中对磁盘上inode的副本
+struct inode {
+  uint dev;           // Device number
+  uint inum;          // Inode number
+  int ref;            // Reference count 引用内存中c指针的数量
+  struct sleeplock lock; // protects everything below here
+  int valid;          // inode has been read from disk?
 
-// Read the super block.
-static void
-readsb(int dev, struct superblock *sb)
-{
-  struct buf *bp;
-
-  bp = bread(dev, 1);
-  memmove(sb, bp->data, sizeof(*sb));
-  brelse(bp);
-}
-
-struct buf {
-  int valid;   // has data been read from disk?
-  int disk;    // does disk "own" buf?
-  uint dev;
-  uint blockno;
-  struct sleeplock lock;
-  uint refcnt;
-  struct buf *prev; // LRU cache list
-  struct buf *next;
-  uchar data[BSIZE];
+  short type;         // copy of disk inode
+  short major;
+  short minor;
+  short nlink;
+  uint size;
+#ifdef SOL_FS
+#else
+  uint addrs[NDIRECT+1];
+#endif
 };
 
 struct {
   struct spinlock lock;
-  struct buf buf[NBUF];
+  struct inode inode[NINODE];
+} icache;
+// 和bcache类似
 
-  // Linked list of all buffers, through prev/next.
-  // Sorted by how recently the buffer was used.
-  // head.next is most recent, head.prev is least.
-  struct buf head;
-} bcache;
+// Inodes per block.
+#define IPB           (BSIZE / sizeof(struct dinode))
 
-// Return a locked buf with the contents of the indicated block.
-struct buf*
-bread(uint dev, uint blockno)
-{
-  struct buf *b;
-
-  b = bget(dev, blockno);
-  if(!b->valid) {
-    virtio_disk_rw(b, 0);
-    b->valid = 1;
-  }
-  return b;
-}
-
-// Look through buffer cache for block on device dev.
-// If not found, allocate a buffer.
-// In either case, return locked buffer.
-static struct buf*
-bget(uint dev, uint blockno)
-{
-  struct buf *b;
-
-  acquire(&bcache.lock);
-
-  // Is the block already cached?
-  for(b = bcache.head.next; b != &bcache.head; b = b->next){
-    if(b->dev == dev && b->blockno == blockno){
-      b->refcnt++;
-      release(&bcache.lock);
-      acquiresleep(&b->lock);
-      return b;
-    }
-  }
-
-  // Not cached.
-  // Recycle the least recently used (LRU) unused buffer.
-  for(b = bcache.head.prev; b != &bcache.head; b = b->prev){
-    if(b->refcnt == 0) {
-      b->dev = dev;
-      b->blockno = blockno;
-      b->valid = 0;
-      b->refcnt = 1;
-      release(&bcache.lock);
-      acquiresleep(&b->lock);
-      return b;
-    }
-  }
-  panic("bget: no buffers");
-}
-
-
+// Block containing inode i
+#define IBLOCK(i, sb)     ((i) / IPB + sb.inodestart)
 ```
+
+```c
+void
+iinit()
+{
+  int i = 0;
+  
+  initlock(&icache.lock, "icache");
+  for(i = 0; i < NINODE; i++) {
+    initsleeplock(&icache.inode[i].lock, "inode");
+  }
+}
+
+// Allocate an inode on device dev.
+// Mark it as allocated by  giving it type type.
+// Returns an unlocked but allocated and referenced inode.
+// 分配一个空闲的inode在磁盘上
+struct inode*
+ialloc(uint dev, short type)
+{
+  int inum;
+  struct buf *bp;
+  struct dinode *dip;
+
+  for(inum = 1; inum < sb.ninodes; inum++){
+    // 找到当前inode所处的inode block
+    bp = bread(dev, IBLOCK(inum, sb));
+    // 找到具体的inode
+    dip = (struct dinode*)bp->data + inum%IPB;
+    if(dip->type == 0){  // a free inode
+      memset(dip, 0, sizeof(*dip));
+      dip->type = type;
+      log_write(bp);   // mark it allocated on the disk
+      brelse(bp);
+      return iget(dev, inum);
+    }
+    brelse(bp);
+  }
+  panic("ialloc: no inodes");
+}
+
+// Copy a modified in-memory inode to disk.
+// Must be called after every change to an ip->xxx field
+// that lives on disk, since i-node cache is write-through.
+// Caller must hold ip->lock.
+// 将内存中修改后的inode信息复制到磁盘中的inode
+void
+iupdate(struct inode *ip)
+{
+  struct buf *bp;
+  struct dinode *dip;
+
+  bp = bread(ip->dev, IBLOCK(ip->inum, sb));
+  dip = (struct dinode*)bp->data + ip->inum%IPB;
+  dip->type = ip->type;
+  dip->major = ip->major;
+  dip->minor = ip->minor;
+  dip->nlink = ip->nlink;
+  dip->size = ip->size;
+  memmove(dip->addrs, ip->addrs, sizeof(ip->addrs));
+  log_write(bp);
+  brelse(bp);
+}
+
+// Find the inode with number inum on device dev
+// and return the in-memory copy. Does not lock
+// the inode and does not read it from disk.
+// 获取一个内存中的inode（从icache）
+static struct inode*
+iget(uint dev, uint inum)
+{
+  struct inode *ip, *empty;
+
+  acquire(&icache.lock);
+
+  // Is the inode already cached?
+  empty = 0;
+  // 先遍历icache
+  for(ip = &icache.inode[0]; ip < &icache.inode[NINODE]; ip++){
+    // 找到有现成的，就把引用计数+1，然后返回inode
+    if(ip->ref > 0 && ip->dev == dev && ip->inum == inum){
+      ip->ref++;
+      release(&icache.lock);
+      return ip;
+    }
+    // 如果没有现成的，但是某一个icache中的inode的引用为0，把这个空的（第一个）赋给empty
+    if(empty == 0 && ip->ref == 0)    // Remember empty slot.
+      empty = ip;
+  }
+
+  // Recycle an inode cache entry.
+  // 返回刚刚标记的那个inode
+  if(empty == 0)
+    panic("iget: no inodes");
+
+  ip = empty;
+  ip->dev = dev;
+  ip->inum = inum;
+  ip->ref = 1;
+  ip->valid = 0;
+  release(&icache.lock);
+
+  return ip;
+}
+
+// Increment reference count for ip.
+// Returns ip to enable ip = idup(ip1) idiom.
+struct inode*
+idup(struct inode *ip)
+{
+  acquire(&icache.lock);
+  ip->ref++;
+  release(&icache.lock);
+  return ip;
+}
+
+// Lock the given inode.
+// Reads the inode from disk if necessary.
+// 上睡眠锁
+void
+ilock(struct inode *ip)
+{
+  struct buf *bp;
+  struct dinode *dip;
+
+  if(ip == 0 || ip->ref < 1)
+    panic("ilock");
+
+  acquiresleep(&ip->lock);
+
+  if(ip->valid == 0){
+    bp = bread(ip->dev, IBLOCK(ip->inum, sb));
+    dip = (struct dinode*)bp->data + ip->inum%IPB;
+    ip->type = dip->type;
+    ip->major = dip->major;
+    ip->minor = dip->minor;
+    ip->nlink = dip->nlink;
+    ip->size = dip->size;
+    memmove(ip->addrs, dip->addrs, sizeof(ip->addrs));
+    brelse(bp);
+    ip->valid = 1;
+    if(ip->type == 0)
+      panic("ilock: no type");
+  }
+}
+
+// Unlock the given inode.
+// 解锁
+void
+iunlock(struct inode *ip)
+{
+  if(ip == 0 || !holdingsleep(&ip->lock) || ip->ref < 1)
+    panic("iunlock");
+
+  releasesleep(&ip->lock);
+}
+
+// Drop a reference to an in-memory inode.
+// If that was the last reference, the inode cache entry can
+// be recycled.
+// If that was the last reference and the inode has no links
+// to it, free the inode (and its content) on disk.
+// All calls to iput() must be inside a transaction in
+// case it has to free the inode.
+// 清除inode数据，注意这里频繁的获取和释放icache的锁，很有意思
+void
+iput(struct inode *ip)
+{
+  acquire(&icache.lock);
+
+  if(ip->ref == 1 && ip->valid && ip->nlink == 0){
+    // inode has no links and no other references: truncate and free.
+
+    // ip->ref == 1 means no other process can have ip locked,
+    // so this acquiresleep() won't block (or deadlock).
+    acquiresleep(&ip->lock);
+
+    release(&icache.lock);
+
+    itrunc(ip);
+    ip->type = 0;
+    iupdate(ip);
+    ip->valid = 0;
+
+    releasesleep(&ip->lock);
+
+    acquire(&icache.lock);
+  }
+
+  ip->ref--;
+  release(&icache.lock);
+}
+
+// Truncate inode (discard contents).
+// Caller must hold ip->lock.
+// 清除inode上的block的数据
+void
+itrunc(struct inode *ip)
+{
+  int i, j;
+  struct buf *bp;
+  uint *a;
+
+  for(i = 0; i < NDIRECT; i++){
+    if(ip->addrs[i]){
+      bfree(ip->dev, ip->addrs[i]);
+      ip->addrs[i] = 0;
+    }
+  }
+
+  if(ip->addrs[NDIRECT]){
+    bp = bread(ip->dev, ip->addrs[NDIRECT]);
+    a = (uint*)bp->data;
+    for(j = 0; j < NINDIRECT; j++){
+      if(a[j])
+        bfree(ip->dev, a[j]);
+    }
+    brelse(bp);
+    bfree(ip->dev, ip->addrs[NDIRECT]);
+    ip->addrs[NDIRECT] = 0;
+  }
+
+  ip->size = 0;
+  iupdate(ip);
+}
+
+// Common idiom: unlock, then put.
+void
+iunlockput(struct inode *ip)
+{
+  iunlock(ip);
+  iput(ip);
+}
+
+// Inode content
+//
+// The content (data) associated with each inode is stored
+// in blocks on the disk. The first NDIRECT block numbers
+// are listed in ip->addrs[].  The next NINDIRECT blocks are
+// listed in block ip->addrs[NDIRECT].
+
+// Return the disk block address of the nth block in inode ip.
+// If there is no such block, bmap allocates one.
+// 将inode中的block与磁盘上特定的block绑定，设计到前面Block allocator的代码
+static uint
+bmap(struct inode *ip, uint bn)
+{
+  uint addr, *a;
+  struct buf *bp;
+
+  if(bn < NDIRECT){
+    if((addr = ip->addrs[bn]) == 0)
+      ip->addrs[bn] = addr = balloc(ip->dev);
+    return addr;
+  }
+  bn -= NDIRECT;
+
+  if(bn < NINDIRECT){
+    // Load indirect block, allocating if necessary.
+    if((addr = ip->addrs[NDIRECT]) == 0)
+      ip->addrs[NDIRECT] = addr = balloc(ip->dev);
+    bp = bread(ip->dev, addr);
+    a = (uint*)bp->data;
+    if((addr = a[bn]) == 0){
+      a[bn] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+    brelse(bp);
+    return addr;
+  }
+
+  panic("bmap: out of range");
+}
+
+// Copy stat information from inode.
+// Caller must hold ip->lock.
+// 通过stat来获取inode的元数据，不直接读取inode数据
+void
+stati(struct inode *ip, struct stat *st)
+{
+  st->dev = ip->dev;
+  st->ino = ip->inum;
+  st->type = ip->type;
+  st->nlink = ip->nlink;
+  st->size = ip->size;
+}
+
+// Read data from inode.
+// Caller must hold ip->lock.
+// If user_dst==1, then dst is a user virtual address;
+// otherwise, dst is a kernel address.
+int
+readi(struct inode *ip, int user_dst, uint64 dst, uint off, uint n)
+{
+  uint tot, m;
+  struct buf *bp;
+
+  if(off > ip->size || off + n < off)
+    return 0;
+  if(off + n > ip->size)
+    n = ip->size - off;
+
+  for(tot=0; tot<n; tot+=m, off+=m, dst+=m){
+    bp = bread(ip->dev, bmap(ip, off/BSIZE));
+    m = min(n - tot, BSIZE - off%BSIZE);
+    if(either_copyout(user_dst, dst, bp->data + (off % BSIZE), m) == -1) {
+      brelse(bp);
+      break;
+    }
+    brelse(bp);
+  }
+  return tot;
+}
+
+// Write data to inode.
+// Caller must hold ip->lock.
+// If user_src==1, then src is a user virtual address;
+// otherwise, src is a kernel address.
+int
+writei(struct inode *ip, int user_src, uint64 src, uint off, uint n)
+{
+  uint tot, m;
+  struct buf *bp;
+
+  if(off > ip->size || off + n < off)
+    return -1;
+  if(off + n > MAXFILE*BSIZE)
+    return -1;
+
+  for(tot=0; tot<n; tot+=m, off+=m, src+=m){
+    bp = bread(ip->dev, bmap(ip, off/BSIZE));
+    m = min(n - tot, BSIZE - off%BSIZE);
+    if(either_copyin(bp->data + (off % BSIZE), user_src, src, m) == -1) {
+      brelse(bp);
+      break;
+    }
+    log_write(bp);
+    brelse(bp);
+  }
+
+  if(n > 0){
+    if(off > ip->size)
+      ip->size = off;
+    // write the i-node back to disk even if the size didn't change
+    // because the loop above might have called bmap() and added a new
+    // block to ip->addrs[].
+    iupdate(ip);
+  }
+
+  return n;
+}
+```
+
+
 
