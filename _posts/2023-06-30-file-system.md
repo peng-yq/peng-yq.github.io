@@ -13,7 +13,7 @@ tags:
 
 ## Introduction
 
-> *此为*[MIT 6.S081](https://www.bilibili.com/video/BV19k4y1C7kA/?spm_id_from=333.1007.top_right_bar_window_custom_collection.content.click)*课程和*[xv6-Books](https://pdos.csail.mit.edu/6.828/2021/xv6/book-riscv-rev2.pdf)*的学习笔记*
+> *此为*[MIT 6.S081](https://www.bilibili.com/video/BV19k4y1C7kA/?spm_id_from=333.1007.top_right_bar_window_custom_collection.content.click)*课程和*[xv6-Books](https://pdos.csail.mit.edu/6.828/2021/xv6/book-riscv-rev2.pdf)*的学习笔记*，这一章内容是真的多
 
 文件系统的目的是组织和存储数据。文件系统通常支持用户和应用程序之间的数据共享，以及持久性，以便在重新启动后数据仍然可用，文件系统是操作系统中除了shell以外最常见的用户接口。如下图所示，xv6文件系统实现分为七层：
 
@@ -609,31 +609,6 @@ bfree(int dev, uint b)
 >
 > 也就是在第7个block（direct block number）的第832个字节偏移量处就是第8000个字节
 
-在xv6中，文件目录结构极其简单，每一个目录包含了directory entries，每一条entry大小为16个字节：
-
-- 前2个字节包含了目录中文件或者子目录的inode编号
-- 接下来的14个字节包含了文件或者子目录名
-
-```c
-// Directory is a file containing a sequence of dirent structures.
-#define DIRSIZ 14
-
-struct dirent {
-  ushort inum;
-  char name[DIRSIZ];
-};
-```
-
-> 对于实现路径名查找，上述信息就足够了。假设我们要查找路径名“/y/x”，我们该怎么做呢？
->
-> 从路径名我们知道，应该从root inode开始查找。通常root inode会有固定的inode编号，在xv6中，这个编号是1。inode从block 32开始，如果是inode1，那么必然在block 32中的64到128字节的位置。所以文件系统可以直接读到root inode的内容。
->
-> 对于路径名查找程序，接下来就是扫描root inode包含的所有block，以找到“y”，也就是读取所有的direct block number和indirect block number。结果可能是找到了，也可能是没有找到。如果找到了，那么目录y也会有一个inode编号，假设是251。我们可以继续从inode 251查找，先读取inode 251的内容，之后再扫描inode所有对应的block，找到“x”并得到文件x对应的inode编号，最后将其作为路径名查找的结果返回。
-
-xv6对于目录和文件的查找设计的很简单，即通过线性扫描实现。实际的文件系统会使用更复杂的数据结构来使得查找更快。
-
-关于xv6中关于inodes的具体过程，直接看[Frans的讲解](https://www.bilibili.com/video/BV19k4y1C7kA?p=13&vd_source=1eef42fa21ab7c4e759ac52299a8dfb1)，比较清晰。
-
 ### Code
 
 inode相关的定义
@@ -659,7 +634,8 @@ struct dinode {
 struct inode {
   uint dev;           // Device number
   uint inum;          // Inode number
-  int ref;            // Reference count 引用内存中c指针的数量
+  int ref;            // Reference count 引用内存中c指针的数量 指针可以来自文件描述符、
+ // 当前工作目录和如exec的瞬态内核代码
   struct sleeplock lock; // protects everything below here
   int valid;          // inode has been read from disk?
 
@@ -702,7 +678,7 @@ iinit()
 // Allocate an inode on device dev.
 // Mark it as allocated by  giving it type type.
 // Returns an unlocked but allocated and referenced inode.
-// 分配一个空闲的inode在磁盘上
+// 分配一个空闲的inode在磁盘上，同时最后调用了iget使得这个inode在icache中有标记
 struct inode*
 ialloc(uint dev, short type)
 {
@@ -804,7 +780,7 @@ idup(struct inode *ip)
 
 // Lock the given inode.
 // Reads the inode from disk if necessary.
-// 上睡眠锁
+// 上睡眠锁（读取/写入inode元数据或内容前，必须得或睡眠锁）
 void
 ilock(struct inode *ip)
 {
@@ -850,7 +826,8 @@ iunlock(struct inode *ip)
 // to it, free the inode (and its content) on disk.
 // All calls to iput() must be inside a transaction in
 // case it has to free the inode.
-// 清除inode数据，注意这里频繁的获取和释放icache的锁，很有意思
+// 减少指向inode的指针计数，如果ref是1即最后一次引用，则清除数据，注意这里频繁的获取和释放
+// icache的锁，很有意思
 void
 iput(struct inode *ip)
 {
@@ -859,14 +836,15 @@ iput(struct inode *ip)
   if(ip->ref == 1 && ip->valid && ip->nlink == 0){
     // inode has no links and no other references: truncate and free.
 
-    // ip->ref == 1 means no other process can have ip locked,
+    // ip->ref == 1 means no other process can have ip locked, 1表示只有调用iput的
+    // 线程指向这个inode
     // so this acquiresleep() won't block (or deadlock).
     acquiresleep(&ip->lock);
 
     release(&icache.lock);
 
     itrunc(ip);
-    ip->type = 0;
+    ip->type = 0;     // 未分配
     iupdate(ip);
     ip->valid = 0;
 
@@ -881,7 +859,7 @@ iput(struct inode *ip)
 
 // Truncate inode (discard contents).
 // Caller must hold ip->lock.
-// 清除inode上的block的数据
+// 清除inode上的block的数据，即将文件截断为0
 void
 itrunc(struct inode *ip)
 {
@@ -929,7 +907,8 @@ iunlockput(struct inode *ip)
 
 // Return the disk block address of the nth block in inode ip.
 // If there is no such block, bmap allocates one.
-// 将inode中的block与磁盘上特定的block绑定，设计到前面Block allocator的代码
+// 返回索引结点ip的第bn个数据块的磁盘块号，如果ip还没有这样的块，bmap会分配一个，涉及到前面
+// Block allocator的代码
 static uint
 bmap(struct inode *ip, uint bn)
 {
@@ -982,7 +961,7 @@ readi(struct inode *ip, int user_dst, uint64 dst, uint off, uint n)
 {
   uint tot, m;
   struct buf *bp;
-
+  // 检查读入的偏移量是否超出了文件大小的范围
   if(off > ip->size || off + n < off)
     return 0;
   if(off + n > ip->size)
@@ -1009,12 +988,14 @@ writei(struct inode *ip, int user_src, uint64 src, uint off, uint n)
 {
   uint tot, m;
   struct buf *bp;
-
+  // 检查写入的偏移量是否超出了文件大小的范围
   if(off > ip->size || off + n < off)
     return -1;
+  // 检查写入的数据长度是否超过文件系统支持的最大文件大小
   if(off + n > MAXFILE*BSIZE)
     return -1;
 
+  // 循环写入数据，直到写入的数据长度等于n
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);
@@ -1039,5 +1020,429 @@ writei(struct inode *ip, int user_src, uint64 src, uint off, uint n)
 }
 ```
 
+## Directory Layer
 
+在xv6中，文件目录结构极其简单，目录的内部实现很像文件，其inode的type为T_DIR，其数据是一系列目录条目（directory entries），每个条目（entry）都是一个struct dirent，每一条entry大小为16个字节：
 
+- 前2个字节包含了目录中文件或者子目录的inode编号
+- 接下来的14个字节包含了文件或者子目录名
+
+```c
+// Directory is a file containing a sequence of dirent structures.
+#define DIRSIZ 14
+
+struct dirent {
+  ushort inum;
+  char name[DIRSIZ];
+};
+```
+
+> 对于实现路径名查找，上述信息就足够了。假设我们要查找路径名“/y/x”，我们该怎么做呢？
+>
+> 从路径名我们知道，应该从root inode开始查找。通常root inode会有固定的inode编号，在xv6中，这个编号是1。inode从block 32开始（block区的第一个block），如果是inode1，那么必然在block 32中的64到128字节的位置（一个inode64字节，最开始有个header inode）。
+>
+> 对于路径名查找程序，接下来就是扫描root inode包含的所有block，以找到“y”，也就是读取所有的direct block number和indirect block number。结果可能是找到了，也可能是没有找到。如果找到了，那么目录y也会有一个inode编号，假设是251。我们可以继续从inode 251查找，先读取inode 251的内容，之后再扫描inode所有对应的block，找到“x”并得到文件x对应的inode编号，最后将其作为路径名查找的结果返回。
+
+xv6对于目录和文件的查找设计的很简单，即通过线性扫描实现。实际的文件系统会使用更复杂的数据结构来使得查找更快。
+
+关于xv6中关于inodes的具体过程，直接看[Frans的讲解](https://www.bilibili.com/video/BV19k4y1C7kA?p=13&vd_source=1eef42fa21ab7c4e759ac52299a8dfb1)，比较清晰。
+
+### Code
+
+```c
+// 常规的字符串比较，比较两个目录的名字（0表示一致，否则返回第一个不相等的字符差值）
+int
+namecmp(const char *s, const char *t)
+{
+  return strncmp(s, t, DIRSIZ);
+}
+
+// Look for a directory entry in a directory.
+// If found, set *poff to byte offset of entry.
+// 在目录中搜索具有给定名称的条目。如果找到一个，它将返回一个指向相应inode的指针，并将*poff设
+// 置为目录中条目的字节偏移量，以满足调用方希望对其进行编辑的情形	
+struct inode*
+dirlookup(struct inode *dp, char *name, uint *poff)
+{
+  uint off, inum;
+  struct dirent de;
+
+  if(dp->type != T_DIR)
+    panic("dirlookup not DIR");
+
+  for(off = 0; off < dp->size; off += sizeof(de)){
+    if(readi(dp, 0, (uint64)&de, off, sizeof(de)) != sizeof(de))
+      panic("dirlookup read");
+    if(de.inum == 0)
+      continue;
+    if(namecmp(name, de.name) == 0){
+      // entry matches path element
+      if(poff)
+        *poff = off;
+      inum = de.inum;
+      return iget(dp->dev, inum);
+    }
+  }
+
+  return 0;
+}
+
+// Write a new directory entry (name, inum) into the directory dp.
+// 将给定名称和inode编号的新目录条目写入目录dp。
+int
+dirlink(struct inode *dp, char *name, uint inum)
+{
+  int off;
+  struct dirent de;
+  struct inode *ip;
+
+  // Check that name is not present.
+  if((ip = dirlookup(dp, name, 0)) != 0){
+    iput(ip);
+    return -1;
+  }
+
+  // Look for an empty dirent.
+  for(off = 0; off < dp->size; off += sizeof(de)){
+    if(readi(dp, 0, (uint64)&de, off, sizeof(de)) != sizeof(de))
+      panic("dirlink read");
+    if(de.inum == 0)
+      break;
+  }
+
+  strncpy(de.name, name, DIRSIZ);
+  de.inum = inum;
+  if(writei(dp, 0, (uint64)&de, off, sizeof(de)) != sizeof(de))
+    panic("dirlink");
+
+  return 0;
+}
+```
+
+## Path Name Layer
+
+这一层主要是涉及对目录的操作（dirlookup），主要包括下面几个函数。
+
+```c
+// Examples:
+//   skipelem("a/bb/c", name) = "bb/c", setting name = "a"
+//   skipelem("///a//bb", name) = "bb", setting name = "a"
+//   skipelem("a", name) = "", setting name = "a"
+//   skipelem("", name) = skipelem("////", name) = 0
+//
+// 从路径字符串中提取路径中的第一个元素（目录或文件名，赋值给name），并返回剩余的路径
+static char*
+skipelem(char *path, char *name)
+{
+  char *s;
+  int len;
+  // 跳过开头的/
+  while(*path == '/')
+    path++;
+  // 如果直接是'\0'，则表示路径结束，只有斜杠字符
+  if(*path == 0)
+    return 0;
+  s = path;
+  // 找到下一个斜杆字符或者结束字符
+  while(*path != '/' && *path != 0)
+    path++;
+  len = path - s;
+  if(len >= DIRSIZ)
+    memmove(name, s, DIRSIZ);
+  else {
+    memmove(name, s, len);
+    name[len] = 0;
+  }
+  // 跳过/
+  while(*path == '/')
+    path++;
+  return path;
+}
+
+// Look up and return the inode for a path name.
+// If parent != 0, return the inode for the parent and copy the final
+// path element into name, which must have room for DIRSIZ bytes.
+// Must be called inside a transaction since it calls iput().
+// 查找并返回给定路径名的 inode，如果 nameiparent 参数为非零值，则返回父目录的 inode，并将最后的路径元素（目录或文件名）复制到 name 中
+static struct inode*
+namex(char *path, int nameiparent, char *name)
+{
+  struct inode *ip, *next;
+  // 下面这个if-else就是绝对路径和相对路径的区别了
+  // 根目录的处理，绝对路径
+  if(*path == '/')
+    ip = iget(ROOTDEV, ROOTINO);
+  else
+  // 当前线程使用文件，相对路径
+    ip = idup(myproc()->cwd);
+  // 遍历path
+  while((path = skipelem(path, name)) != 0){
+    ilock(ip);
+    // 看看当前线程使用的文件是不是目录，不是就解锁然后直接返回0
+    if(ip->type != T_DIR){
+      iunlockput(ip);
+      return 0;
+    }
+    // 如果需要返回父目录inode，并且当前已是最后一级目录，则停止在当前目录层级
+    if(nameiparent && *path == '\0'){
+      // Stop one level early.
+      iunlock(ip);
+      return ip;
+    }
+    // 在当前目录中查找下一个元素的inode，为空的话就解锁直接返回0
+    if((next = dirlookup(ip, name, 0)) == 0){
+      iunlockput(ip);
+      return 0;
+    }
+    iunlockput(ip);
+    ip = next;
+  }
+  // path遍历完毕
+  if(nameiparent){
+    iput(ip);
+    return 0;
+  }
+  return ip;
+}
+
+struct inode*
+namei(char *path)
+{
+  char name[DIRSIZ];
+  return namex(path, 0, name);
+}
+
+struct inode*
+nameiparent(char *path, char *name)
+{
+  return namex(path, 1, name);
+}
+```
+
+## File Descriptor Layer
+
+"Unix万物皆文件"是Unix操作系统的一个重要理念，它表达了Unix系统中对各种设备和资源的抽象方式。在Unix中，几乎所有的东西都被视为文件。这包括普通文件、目录、设备、网络套接字、管道以及其他类型的资源。通过将这些不同类型的实体都抽象为文件，Unix提供了一种统一的接口和操作方式。这种抽象的好处在于，用户和程序可以使用相同的方式来访问和处理不同类型的实体。无论是读取文件、写入文件、创建目录，还是与设备进行通信，都可以使用类似的文件操作系统调用（如打开、读取、写入、关闭）来完成。这种一致性使得Unix系统更加简洁、灵活和易于使用。文件描述符层则是实现这种一致性的层。
+
+正如我们在第1章中看到的，xv6为每个进程提供了自己的打开文件列表或文件描述符。每个打开的文件都由一个struct file表示，它是inode或管道的封装，加上一个I/O偏移量。每次调用open都会创建一个新的打开文件（一个新的struct file）：如果多个进程独立地打开同一个文件，那么不同的实例将具有不同的I/O偏移量。另一方面，单个打开的文件（同一个struct file）可以多次出现在一个进程的文件表中，也可以出现在多个进程的文件表中。如果一个进程使用open打开文件，然后使用dup创建别名，或使用fork与子进程共享，就会发生这种情况。引用计数跟踪对特定打开文件的引用数。可以打开文件进行读取或写入，也可以同时进行读取和写入。readable和writable字段可跟踪此操作。
+
+```c
+struct file {
+#ifdef LAB_NET
+  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE, FD_SOCK } type;
+#else
+  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
+#endif
+  int ref; // reference count
+  char readable;
+  char writable;
+  struct pipe *pipe; // FD_PIPE
+  struct inode *ip;  // FD_INODE and FD_DEVICE
+#ifdef LAB_NET
+  struct sock *sock; // FD_SOCK
+#endif
+  uint off;          // FD_INODE
+  short major;       // FD_DEVICE
+};
+```
+
+系统中所有**打开的文件**都保存在全局文件表ftable中。文件表具有分配文件（filealloc）、创建重复引用（filedup）、释放引用（fileclose）以及读取和写入数据（fileread和filewrite）的函数。
+
+```c
+struct {
+  struct spinlock lock;
+  struct file file[NFILE];   // xv6规定打开的文件数量为100
+} ftable;
+```
+
+### Code
+
+```c
+void
+fileinit(void)
+{
+  initlock(&ftable.lock, "ftable");
+}
+
+// Allocate a file structure.
+// 在ftable中为打开的file分配一个file
+struct file*
+filealloc(void)
+{
+  struct file *f;
+
+  acquire(&ftable.lock);
+  for(f = ftable.file; f < ftable.file + NFILE; f++){
+    if(f->ref == 0){
+      f->ref = 1;
+      release(&ftable.lock);
+      return f;
+    }
+  }
+  release(&ftable.lock);
+  return 0;
+}
+
+// Increment ref count for file f.
+// 创建重复引用（需要f->ref>=1）
+struct file*
+filedup(struct file *f)
+{
+  acquire(&ftable.lock);
+  if(f->ref < 1)
+    panic("filedup");
+  f->ref++;
+  release(&ftable.lock);
+  return f;
+}
+
+// Close file f.  (Decrement ref count, close when reaches 0.)
+void
+fileclose(struct file *f)
+{
+  struct file ff;
+
+  acquire(&ftable.lock);
+  if(f->ref < 1)
+    panic("fileclose");
+  // 当前还有其他线程在使用这个file，不允许关闭
+  if(--f->ref > 0){
+    release(&ftable.lock);
+    return;
+  }
+  // 使用临时变量来关闭file（因为此时我们还持有ftable的锁）
+  ff = *f;
+  // 设置为关闭
+  f->ref = 0;
+  f->type = FD_NONE;
+  release(&ftable.lock);
+
+  if(ff.type == FD_PIPE){
+    pipeclose(ff.pipe, ff.writable);
+  } else if(ff.type == FD_INODE || ff.type == FD_DEVICE){
+    begin_op();
+    iput(ff.ip);
+    end_op();
+  }
+}
+
+// Get metadata about file f.
+// addr is a user virtual address, pointing to a struct stat.
+// 获取file（只允许inode）的元数据（通过stati），复制到addr（虚拟地址）中
+int
+filestat(struct file *f, uint64 addr)
+{
+  struct proc *p = myproc();
+  struct stat st;
+  
+  if(f->type == FD_INODE || f->type == FD_DEVICE){
+    ilock(f->ip);
+    stati(f->ip, &st);
+    iunlock(f->ip);
+    if(copyout(p->pagetable, addr, (char *)&st, sizeof(st)) < 0)
+      return -1;
+    return 0;
+  }
+  return -1;
+}
+
+// Read from file f.
+// addr is a user virtual address.
+int
+fileread(struct file *f, uint64 addr, int n)
+{
+  int r = 0;
+
+  if(f->readable == 0)
+    return -1;
+
+  if(f->type == FD_PIPE){
+    r = piperead(f->pipe, addr, n);
+  } else if(f->type == FD_DEVICE){
+    if(f->major < 0 || f->major >= NDEV || !devsw[f->major].read)
+      return -1;
+    r = devsw[f->major].read(1, addr, n);
+  } else if(f->type == FD_INODE){
+    ilock(f->ip);
+    if((r = readi(f->ip, 1, addr, f->off, n)) > 0)
+      f->off += r;
+    iunlock(f->ip);
+  } else {
+    panic("fileread");
+  }
+
+  return r;
+}
+
+// Write to file f.
+// addr is a user virtual address.
+int
+filewrite(struct file *f, uint64 addr, int n)
+{
+  int r, ret = 0;
+
+  if(f->writable == 0)
+    return -1;
+
+  if(f->type == FD_PIPE){
+    ret = pipewrite(f->pipe, addr, n);
+  } else if(f->type == FD_DEVICE){
+    if(f->major < 0 || f->major >= NDEV || !devsw[f->major].write)
+      return -1;
+    ret = devsw[f->major].write(1, addr, n);
+  } else if(f->type == FD_INODE){
+    // write a few blocks at a time to avoid exceeding
+    // the maximum log transaction size, including
+    // i-node, indirect block, allocation blocks,
+    // and 2 blocks of slop for non-aligned writes.
+    // this really belongs lower down, since writei()
+    // might be writing a device like the console.
+    int max = ((MAXOPBLOCKS-1-1-2) / 2) * BSIZE;
+    int i = 0;
+    while(i < n){
+      int n1 = n - i;
+      if(n1 > max)
+        n1 = max;
+
+      begin_op();
+      ilock(f->ip);
+      if ((r = writei(f->ip, 1, addr + i, f->off, n1)) > 0)
+        f->off += r;
+      iunlock(f->ip);
+      end_op();
+
+      if(r < 0)
+        break;
+      if(r != n1)
+        panic("short filewrite");
+      i += r;
+    }
+    ret = (i == n ? n : -1);
+  } else {
+    panic("filewrite");
+  }
+
+  return ret;
+}
+```
+
+## System Calls
+
+通过使用前面底层提供的函数，大多数系统调用的实现都很简单，xv6中的系统调用代码位于sysfile.c中。
+
+## Real World
+
+实际操作系统中的buffer cache比xv6复杂得多，但功能一致：缓存和同步对磁盘的访问。xv6的buffer cache使用简单的LRU替换策略；有许多更复杂的策略可以实现，每种策略都适用于某些工作场景，而不适用于其他某些工作场景。更高效的LRU缓存将消除链表，而改为使用哈希表进行查找，并使用堆进行LRU替换。现代buffer cache通常与虚拟内存系统集成，以支持内存映射文件。
+
+xv6的日志系统效率低下，提交不能与文件系统调用同时发生。系统记录整个块，即使一个块中只有几个字节被更改。它执行同步日志写入，每次写入一个块，每个块可能需要整个磁盘旋转时间。真正的日志系统解决了所有这些问题。
+
+日志记录不是提供崩溃恢复的唯一方法。早期的文件系统在重新启动期间使用了一个清道夫程序（例如，UNIX的fsck程序）来检查每个文件和目录以及块和索引节点空闲列表，查找并解决不一致的问题。清理大型文件系统可能需要数小时的时间，而且在某些情况下，无法以导致原始系统调用原子化的方式解决不一致问题。从日志中恢复要快得多，并且在崩溃时会导致系统调用原子化。
+
+Xv6使用的索引节点和目录的基础磁盘布局与早期UNIX相同；这一方案多年来经久不衰。BSD的UFS/FFS和Linux的ext2/ext3使用基本相同的数据结构。文件系统布局中最低效的部分是目录，它要求在每次查找期间对所有磁盘块进行线性扫描。当目录只有几个磁盘块时，这是合理的，但对于包含许多文件的目录来说，开销巨大。Microsoft Windows的NTFS、Mac OS X的HFS和Solaris的ZFS（仅举几例）将目录实现为磁盘上块的平衡树。这很复杂，但可以保证目录查找在对数时间内完成（即时间复杂度为O(logn)）。
+
+Xv6对于磁盘故障的解决很初级：如果磁盘操作失败，Xv6就会调用panic。这是否合理取决于硬件：如果操作系统位于使用冗余屏蔽磁盘故障的特殊硬件之上，那么操作系统可能很少看到故障，因此panic是可以的。另一方面，使用普通磁盘的操作系统应该预料到会出现故障，并能更优雅地处理它们，这样一个文件中的块丢失不会影响文件系统其余部分的使用。
+
+Xv6要求文件系统安装在单个磁盘设备上，且大小不变。随着大型数据库和多媒体文件对存储的要求越来越高，操作系统正在开发各种方法来消除“每个文件系统一个磁盘”的瓶颈。基本方法是将多个物理磁盘组合成一个逻辑磁盘。RAID等硬件解决方案仍然是最流行的，但当前的趋势是在软件中尽可能多地实现这种逻辑。这些软件实现通常允许通过动态添加或删除磁盘来扩展或缩小逻辑设备等丰富功能。当然，一个能够动态增长或收缩的存储层需要一个能够做到这一点的文件系统：xv6使用的固定大小的inode块阵列在这样的环境中无法正常工作。将磁盘管理与文件系统分离可能是最干净的设计，但两者之间复杂的接口导致了一些系统（如Sun的ZFS）将它们结合起来。
+
+Xv6的文件系统缺少现代文件系统的许多其他功能；例如，它缺乏对快照和增量备份的支持。
+
+现代Unix系统允许使用与磁盘存储相同的系统调用访问多种资源：命名管道、网络连接、远程访问的网络文件系统以及监视和控制接口，如/proc（注：Linux 内核提供了一种通过/proc文件系统，在运行时访问内核内部数据结构、改变内核设置的机制。proc文件系统是一个伪文件系统，它只存在内存当中，而不占用外存空间。它以文件系统的方式为访问系统内核数据的操作提供接口。）。不同于xv6中fileread和filewrite的if语句，这些系统通常为每个打开的文件提供一个函数指针表，每个操作一个，并通过函数指针来援引inode的调用实现。网络文件系统和用户级文件系统提供了将这些调用转换为网络RPC并在返回之前等待响应的函数。
