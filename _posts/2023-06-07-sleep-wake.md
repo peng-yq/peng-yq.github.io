@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "xv6—调度（二）"
-subtitle: "[xv6] scheduling Part One"
+subtitle: "[xv6] scheduling Part Two"
 author: "PYQ"
 header-mask: 0.3
 mathjax: true
