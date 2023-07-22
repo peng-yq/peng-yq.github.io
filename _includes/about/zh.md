@@ -1,8 +1,8 @@
 #### **About PYQ**
 
-- 👋🏼 Hello，World！我是PYQ，一位喜欢思考、记录的程序员。
-- 🎓 我目前在[信息工程研究所 (IIE)](http://www.iie.ac.cn/)，[中国科学院大学 (UCAS)](https://www.ucas.ac.cn/)攻读硕士。
-- ⚽ 我是一名足球爱好者，喜欢看球、踢球，是C罗的死忠粉。
+- 👋🏼 Hello，World！It's PYQ here!
+- 🎓 我目前在[信息工程研究所 (IIE)](http://www.iie.ac.cn/)，中国科学院（CAS）/ [中国科学院大学 (UCAS)](https://www.ucas.ac.cn/)攻读硕士。
+- ⚽ 我是一名足球爱好者，喜欢看球、踢球，最喜欢的球星是C罗。
 - [CV_CN](https://github.com/peng-yq/peng-yq.github.io/raw/main/pdf/CV_CN.pdf)
 
 #### **🚀 爱好和兴趣**
