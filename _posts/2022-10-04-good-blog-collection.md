@@ -41,3 +41,4 @@ tags:
 - [浮点数的二进制biao'shi](https://www.ruanyifeng.com/blog/2010/06/ieee_floating-point_representation.html)
 - [c++中的cout.setf()函数](https://blog.csdn.net/baishuiniyaonulia/article/details/79144033)，[官方文档](https://cplusplus.com/reference/ios/ios_base/fmtflags/)
 - [C++继承和动态分配](https://blog.csdn.net/qq_36607894/article/details/105116525)
+- [Docker的Pull Digest和Image ID](https://developer.aliyun.com/article/57752)
