@@ -43,3 +43,4 @@ tags:
 - [C++继承和动态分配](https://blog.csdn.net/qq_36607894/article/details/105116525)
 - [Docker的Pull Digest和Image ID](https://developer.aliyun.com/article/57752)
 - [docker imageid 和 digest区别解析](https://www.jb51.net/server/287971i6f.htm)
+- [JWT (Json Web Token)]()
