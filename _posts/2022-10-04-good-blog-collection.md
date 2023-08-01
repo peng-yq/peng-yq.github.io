@@ -43,4 +43,6 @@ tags:
 - [C++继承和动态分配](https://blog.csdn.net/qq_36607894/article/details/105116525)
 - [Docker的Pull Digest和Image ID](https://developer.aliyun.com/article/57752)
 - [docker imageid 和 digest区别解析](https://www.jb51.net/server/287971i6f.htm)
-- [JWT (Json Web Token)]()
+- [JWT (Json Web Token)](https://jwt.io/introduction)
+- [技术杂谈—shell和terminal](https://www.bilibili.com/video/BV16A411675V/?spm_id_from=333.999.0.0&vd_source=1eef42fa21ab7c4e759ac52299a8dfb1)
+- [命令行界面 (CLI)、终端 (Terminal)、Shell、TTY，傻傻分不清楚？](https://segmentfault.com/a/1190000016129862)
