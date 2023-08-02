@@ -24,16 +24,33 @@ tags:
 
 1. type (Required) ：说明此次提交的类别，只允许使用下面的类别。
 
-  - feat (feature)：新功能/特性
-  - fix/to：修复bug。fix适合一次提交直接修复bug；to适合多次提交直到最终修复bug（fix）
-  - docs (documentation)：文档
-  - style：修改格式，注释也算
-  - refactor：重构，非新增功能和修复bug，修改文件名也算
-  - perf：优化性能、体验
-  - test：增加测试
-  - chore：构建过程或辅助工具的变动
-  - revert：回滚到上一个版本
-  - merge：代码合并
-  - sync：同步主线
+     - feat (feature)：新功能/特性
+
+     - fix/to：修复bug。fix适合一次提交直接修复bug；to适合多次提交直到最终修复bug（fix）
+
+     - docs (documentation)：文档
+
+     - style：修改格式，注释也算
+
+     - refactor：重构，非新增功能和修复bug，修改文件名也算
+
+     - perf：优化性能、体验
+
+     - test：增加测试
+
+     - chore：构建过程或辅助工具的变动
+
+     - revert：回滚到上一个版本
+
+     - merge：代码合并
+
+     - sync：同步主线
+
+
+
+
 2. scope (optional)：说明commit影响的范围（看了看一些著名的repo都没有这个，感觉用的不多
+
+
+
 3. subject (required)：commit的简短描述，不超过50字符
