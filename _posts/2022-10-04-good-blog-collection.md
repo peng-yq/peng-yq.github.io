@@ -46,3 +46,4 @@ tags:
 - [JWT (Json Web Token)](https://jwt.io/introduction)
 - [技术杂谈—shell和terminal](https://www.bilibili.com/video/BV16A411675V/?spm_id_from=333.999.0.0&vd_source=1eef42fa21ab7c4e759ac52299a8dfb1)
 - [命令行界面 (CLI)、终端 (Terminal)、Shell、TTY，傻傻分不清楚？](https://segmentfault.com/a/1190000016129862)
+- [手撕docker文件结构 —— overlayFS，image，container文件结构详解](https://zhuanlan.zhihu.com/p/374924046)
