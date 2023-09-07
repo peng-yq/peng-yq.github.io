@@ -11,6 +11,128 @@ tags:
   - docker
 ---
 
+## container hooks
+
+### hooks
+
+什么是钩子呢？
+
+[Wikipedia中的定义如下](https://en.wikipedia.org/wiki/Hooking)。
+
+>In computer programming, the term hooking covers a range of techniques used to alter or augment the behavior of an operating system, of applications, or of other software components by intercepting function calls or messages or events passed between software components. Code that handles such intercepted function calls, events or messages is called a "hook".
+
+[一张很形象的图](https://www.zhihu.com/question/20610442/answer/128226574)。
+
+<img src="https://picx.zhimg.com/80/v2-d995ff87806caf4e6619a2bbc3e523da_720w.webp?source=1940ef5c">
+
+钩子主要有两个关键点，一个是导致钩子调用的事件（某个事件发生前或者发生后），一个是钩子的具体代码。因此，钩子实际上就是在某个时间点或事件点触发的一系列函数或代码。
+
+### hooks in container
+
+#### lifecycle
+
+容器中的钩子和容器的生命周期息息相关，钩子能使容器感知其生命周期内的事件，并且当相应的生命周期钩子被调用时运行指定的代码。
+
+[oci runtime-spec](https://github.com/opencontainers/runtime-spec/blob/main/runtime.md#lifecycle)对容器生命周期的描述如下（单纯从低级运行时创建容器开始，不包括镜像）。
+
+> The lifecycle describes the timeline of events that happen from when a container is created to when it ceases to exist.
+>
+> - OCI compliant runtime's create command is invoked with a reference to the location of the bundle and a unique identifier.
+> - **The container's runtime environment MUST be created according to the configuration in config.json**. If the runtime is unable to create the environment specified in the config.json, it MUST generate an error. While the resources requested in the config.json MUST be created, the user-specified program (from process) MUST NOT be run at this time. Any updates to config.json after this step MUST NOT affect the container.
+> - The **prestart hooks** MUST be invoked by the runtime. If any prestart hook fails, the runtime MUST generate an error, stop the container, and continue the lifecycle at step 12.
+> - The **createRuntime hooks** MUST be invoked by the runtime. If any createRuntime hook fails, the runtime MUST generate an error, stop the container, and continue the lifecycle at step 12.
+> - The **createContainer hooks** MUST be invoked by the runtime. If any createContainer hook fails, the runtime MUST generate an error, stop the container, and continue the lifecycle at step 12.
+> - Runtime's start command is invoked with the unique identifier of the container.
+> - The **startContainer hooks** MUST be invoked by the runtime. If any startContainer hook fails, the runtime MUST generate an error, stop the container, and continue the lifecycle at step 12.
+> - The runtime MUST run the user-specified program, as specified by process.
+> - The **poststart hooks** MUST be invoked by the runtime. If any poststart hook fails, the runtime MUST log a warning, but the remaining hooks and lifecycle continue as if the hook had succeeded.
+> - The container process exits. This MAY happen due to erroring out, exiting, crashing or the runtime's kill operation being invoked.
+> - Runtime's delete command is invoked with the unique identifier of the container.
+> - The container MUST be destroyed by undoing the steps performed during create phase (step 2).
+> - The poststop hooks MUST be invoked by the runtime. If any poststop hook fails, the runtime MUST log a warning, but the remaining hooks and lifecycle continue as if the hook had succeeded.
+
+可以看到oci定义的容器生命周期中，如果在容器的config.json中定义了钩子，runc必须执行钩子，并且时间节点在前的钩子执行成功后才能执行下一个钩子；若有一个钩子执行失败，则会报错并摧毁容器（在容器创建后执行的钩子失败，并不会删除容器，而是启动失败）。
+
+除了上述oci通过runc创建并启动容器的流程来对容器生命周期的描述外，docker和k8s也有各自对容器生命周期的描述（出于容器的不同状态），均符合oci规范。
+
+Docker
+
+<img src="https://img-blog.csdnimg.cn/20210323145854637.png">
+
+[Pod 的生命周期-K8s](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/#pod-lifetime)
+
+#### oci hooks
+
+[oci runtime-spec定义的钩子](https://github.com/opencontainers/runtime-spec/blob/main/config.md#posix-platform-hooks)主要有6个，其中prestart细分成了3个hook，已被废弃。
+
+| Name                    | Namespace | When                                                         |
+| ----------------------- | --------- | ------------------------------------------------------------ |
+| `prestart` (Deprecated) | runtime   | After the start operation is called but before the user-specified program command is executed. |
+| `createRuntime`         | runtime   | During the create operation, after the runtime environment has been created and before the pivot root or any equivalent operation. |
+| `createContainer`       | container | During the create operation, after the runtime environment has been created and before the pivot root or any equivalent operation. |
+| `startContainer`        | container | After the start operation is called but before the user-specified program command is executed. |
+| `poststart`             | runtime   | After the user-specified process is executed but before the start operation returns. |
+| `poststop`              | runtime   | After the container is deleted but before the delete operation returns. |
+
+若想在容器的生命周期调用钩子，则需要在容器的config.json中的hooks字段进行定义。
+
+```json
+"hooks": {
+    "prestart": [
+        {
+            "path": "/usr/bin/fix-mounts",
+            "args": ["fix-mounts", "arg1", "arg2"],
+            "env":  [ "key1=value1"]
+        },
+        {
+            "path": "/usr/bin/setup-network"
+        }
+    ],
+    "createRuntime": [
+        {
+            "path": "/usr/bin/fix-mounts",
+            "args": ["fix-mounts", "arg1", "arg2"],
+            "env":  [ "key1=value1"]
+        },
+        {
+            "path": "/usr/bin/setup-network"
+        }
+    ],
+    "createContainer": [
+        {
+            "path": "/usr/bin/mount-hook",
+            "args": ["-mount", "arg1", "arg2"],
+            "env":  [ "key1=value1"]
+        }
+    ],
+    "startContainer": [
+        {
+            "path": "/usr/bin/refresh-ldcache"
+        }
+    ],
+    "poststart": [
+        {
+            "path": "/usr/bin/notify-start",
+            "timeout": 5
+        }
+    ],
+    "poststop": [
+        {
+            "path": "/usr/sbin/cleanup.sh",
+            "args": ["cleanup.sh", "-f"]
+        }
+    ]
+}
+```
+
+### hooks supported in docker and k8s
+
+docker并不支持通过参数直接添加使用hooks，或者说现在不支持（调研中发现有一两篇博客写到可以通过docker run --hooks-path添加钩子，但通过`docker --help | grep hook`命令找不到任何和hook相关的参数）。
+
+k8s只支持[postStart和preStop hooks](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/)，通过在pod的yaml文件中定义即可。但实际上我认为prestart（或者说其细分后的三个hooks）更加实用一些，比如在创建或启动容器前进行一些网络检查和配置。有意思的是在[k8s的issue中有一个关于“PreStart lifecycle hook Required”的讨论](https://github.com/kubernetes/kubernetes/issues/96560)，讨论提到了修改Dockerfile并在entrypoint.sh中执行，以及使用[k8s提供的init容器](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/init-containers/)对prestart的代替。
+
+补充：[PreStart and PostStop event hooks #140](https://github.com/kubernetes/kubernetes/issues/140)中有老哥回答k8s不会再支持prestart hook了，取而代之的是init容器。
+
 ## oci-add-hooks (awslabs)
 
 ### introduction
