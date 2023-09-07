@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "【MIT 6.S081】Lab 3: page tables"
+title: "MIT 6.S081—Lab 3: page tables"
 subtitle: "page tables"
 author: "PYQ"
 header-mask: 0.3
