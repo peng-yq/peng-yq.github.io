@@ -57,7 +57,7 @@ tags:
 
 Docker
 
-<img src="https://img-blog.csdnimg.cn/20210323145854637.png">
+<img src="https://cdn.jsdelivr.net/gh/peng-yq/Gallery/img/202309081015834.png">
 
 [Pod 的生命周期-K8s](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/#pod-lifetime)
 
