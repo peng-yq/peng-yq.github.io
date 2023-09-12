@@ -57,3 +57,4 @@ tags:
 - [如何参与开源项目 - 细说 GitHub 上的 PR 全过程](https://www.cnblogs.com/daniel-hutao/p/open-a-pr-in-github.html) 
 - [K8S Containerd 环境添加NVIDIA Runtime支持](https://juejin.cn/post/7202877900240339000)
 - [Installing the NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#prerequisites)
+- [containerd-config.toml](https://github.com/containerd/containerd/blob/main/docs/cri/config.md)
