@@ -30,6 +30,7 @@ tags:
 - [Linux 下 “一切皆文件” 思想的本质和好处在哪里？与 Windows 下的文件管理思想有啥差别？](https://www.zhihu.com/question/25696682/answer/31595790)
 - [理解inode](https://www.ruanyifeng.com/blog/2011/12/inode.html)
 - [Linux源码解读—文件系统inode详解](https://www.cnblogs.com/theseventhson/p/15622853.html)
+- [systemd介绍](https://fugangqiang.github.io/posts/linux/systemd%E4%BB%8B%E7%BB%8D.html)
 
 ## Others
 
