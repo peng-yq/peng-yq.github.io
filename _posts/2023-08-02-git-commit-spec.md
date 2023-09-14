@@ -22,7 +22,7 @@ tags:
 <type>(<scope>): <subject>
 ```
 
-1. type (Required) ：说明此次提交的类别，只允许使用下面的类别。
+1. type (required) ：说明此次提交的类别，只允许使用下面的类别。
 
      - feat (feature)：新功能/特性
 
