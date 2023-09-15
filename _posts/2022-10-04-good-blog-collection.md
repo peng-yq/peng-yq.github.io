@@ -58,4 +58,7 @@ tags:
 - [如何参与开源项目 - 细说 GitHub 上的 PR 全过程](https://www.cnblogs.com/daniel-hutao/p/open-a-pr-in-github.html) 
 - [K8S Containerd 环境添加NVIDIA Runtime支持](https://juejin.cn/post/7202877900240339000)
 - [Installing the NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#prerequisites)
-- [containerd-config.toml](https://github.com/containerd/containerd/blob/main/docs/cri/config.md)
+- [主流开源协议之间有何异同](https://www.zhihu.com/question/19568896/answer/20907890)
+- [urfave/cli 框架](https://jaycechant.info/2020/golang-in-action-day-8/)
+- [golang 1.13 - module VS package](https://jaycechant.info/2020/golang-1-13-module-VS-package/)
+- [关于/var/run/docker.sock那些事儿](https://blog.csdn.net/qq_42997214/article/details/122990008)
