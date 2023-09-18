@@ -31,6 +31,9 @@ tags:
 - [理解inode](https://www.ruanyifeng.com/blog/2011/12/inode.html)
 - [Linux源码解读—文件系统inode详解](https://www.cnblogs.com/theseventhson/p/15622853.html)
 - [systemd介绍](https://fugangqiang.github.io/posts/linux/systemd%E4%BB%8B%E7%BB%8D.html)
+- [Linux tee命令](https://www.myfreax.com/linux-tee-command/)
+- [Shebang](https://zh.wikipedia.org/wiki/Shebang)
+- [Linux shell 脚本中， "\$@"和"\$#" 分别是什么意思？](https://blog.csdn.net/qiezikuaichuan/article/details/80014298)
 
 ## Others
 
@@ -62,3 +65,5 @@ tags:
 - [urfave/cli 框架](https://jaycechant.info/2020/golang-in-action-day-8/)
 - [golang 1.13 - module VS package](https://jaycechant.info/2020/golang-1-13-module-VS-package/)
 - [关于/var/run/docker.sock那些事儿](https://blog.csdn.net/qq_42997214/article/details/122990008)
+- [容器中的 Shim 到底是个什么鬼？](https://cloud.tencent.com/developer/article/1948155)
+- [Containerd深度剖析-runtime篇](https://cloud.tencent.com/developer/article/2154031)
