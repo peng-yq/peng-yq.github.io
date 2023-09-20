@@ -68,3 +68,4 @@ tags:
 - [关于/var/run/docker.sock那些事儿](https://blog.csdn.net/qq_42997214/article/details/122990008)
 - [容器中的 Shim 到底是个什么鬼？](https://cloud.tencent.com/developer/article/1948155)
 - [Containerd深度剖析-runtime篇](https://cloud.tencent.com/developer/article/2154031)
+- [函数式选项(Functional Options)编程模式](https://zhuanlan.zhihu.com/p/436468481)
