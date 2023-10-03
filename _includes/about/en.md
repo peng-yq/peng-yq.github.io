@@ -1,7 +1,7 @@
 #### **About PYQ**
 
 - 👋🏼 Hello，World！It's PYQ here！
-- 🎓 I'm a postgraduate student of [Institute of Information Engineering (IIE)](http://www.iie.ac.cn/), [University of Chinese Academy of Sciences (UCAS)](https://www.ucas.ac.cn/ ).
+- 🎓 I'm a postgraduate student of [Institute of Information Engineering (IIE)](http://www.iie.ac.cn/), [Chinese Academy of Sciences (CAS)](https://english.cas.cn/) / [University of Chinese Academy of Sciences (UCAS)](https://www.ucas.ac.cn/ ).
 - ⚽ I am a football lover, I like to watch and play football. And Cristiano Ronaldo is my favorite player.
 - [CV_CN](https://github.com/peng-yq/peng-yq.github.io/raw/main/pdf/CV_CN.pdf)
 
