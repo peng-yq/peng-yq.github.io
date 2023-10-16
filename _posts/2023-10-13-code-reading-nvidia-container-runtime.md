@@ -319,6 +319,44 @@ func NewModifyingRuntimeWrapper(logger logger.Interface, runtime Runtime, spec S
 }
 ```
 
+Exec函数用于让modifyingRuntimeWrapper.runtime执行参数，只有在参数含有create时才对spec应用modifier，否则直接将参数传给低级运行时：
+
+```go
+func (r *modifyingRuntimeWrapper) Exec(args []string) error {
+	if HasCreateSubcommand(args) {
+		err := r.modify()
+		if err != nil {
+			return fmt.Errorf("could not apply required modification to OCI specification: %v", err)
+		}
+		r.logger.Infof("Applied required modification to OCI specification")
+	} else {
+		r.logger.Infof("No modification of OCI specification required")
+	}
+	r.logger.Infof("Forwarding command to runtime")
+	return r.runtime.Exec(args)
+}
+```
+
+modify函数用于将spec应用特定的modifier：
+
+```go
+func (r *modifyingRuntimeWrapper) modify() error {
+	_, err := r.ociSpec.Load()
+	if err != nil {
+		return fmt.Errorf("error loading OCI specification for modification: %v", err)
+	}
+	err = r.ociSpec.Modify(r.modifier)
+	if err != nil {
+		return fmt.Errorf("error modifying OCI spec: %v", err)
+	}
+	err = r.ociSpec.Flush()
+	if err != nil {
+		return fmt.Errorf("error writing modified OCI specification: %v", err)
+	}
+	return nil
+}
+```
+
 ### runtime_syscall_exec.go
 
 定义的结构体：
@@ -329,6 +367,8 @@ var _ Runtime = (*syscallExec)(nil)
 ```
 
 Exec函数用于执行命令，没太多好讲的：
+
+> update：最后一个return写的很严谨，因为在调用exec后，调用的那个进程会替换syscall.Exec，不会有任何返回，即使err为nil也是错误的，因为在成功执行调用后，不会执行后续代码。
 
 ```go
 func (r syscallExec) Exec(args []string) error {
@@ -533,6 +573,8 @@ func flushTo(spec *specs.Spec, writer io.Writer) error {
 ```
 
 Flush函数对上述函数进行了一次封装，并添加了创建文件等操作：
+
+> 这里方法的接收者为s fileSpec，而非s *fileSpec，可能是fileSpec后续还可能用
 
 ```go
 func (s fileSpec) Flush() error {
