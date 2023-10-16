@@ -140,7 +140,7 @@ func IsBundleFlag(arg string) bool {
 
 HasCreateSubcommand函数：按照代码逻辑只有previousWasBundle为false，并且当前命令为“create”才为true，“-b create”这种情况则会返回false
 
-PS：runc在创建容器时的命令为create --bundle
+>  PS：runc在创建容器时的命令为create --bundle
 
 ```go
 func HasCreateSubcommand(args []string) bool {
@@ -642,6 +642,22 @@ func (s *State) GetContainerRoot() (string, error) {
 }
 ```
 
+## nvidia-container-runtime
+
+### main.go
+
+main函数很简单，创建一个新的runtime，并执行传入的参数。
+
+```go
+func main() {
+	r := runtime.New()
+	err := r.Run(os.Args)
+	if err != nil {
+		os.Exit(1)
+	}
+}
+```
+
 ## runtime
 
 ### api.go
@@ -873,6 +889,8 @@ newNVIDIAContainerRuntime用于构造runtime：
 2. 解析spec文件
 3. 解析modifier
 4. 构造runtime
+
+> nvidia这个项目只有runc命令有“create”时会应用修改器，否则直接调用低级运行时，避免了多次修改spec文件；相比下awslabs写的那个oci-add-hooks显得比较玩具了，每次都会修改spec
 
 ```go
 func newNVIDIAContainerRuntime(logger logger.Interface, cfg *config.Config, argv []string) (oci.Runtime, error) {
