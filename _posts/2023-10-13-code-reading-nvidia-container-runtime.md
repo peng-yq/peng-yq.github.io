@@ -1041,3 +1041,4 @@ func (r rt) Run(argv []string) (rerr error) {
 }
 ```
 
+> 这里在打印version信息时，除了打印nvidia-container-runtime的version外，还会打印低级运行时的信息，是因为调用runtime.Exec(argv)的原因
