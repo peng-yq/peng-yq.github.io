@@ -69,3 +69,4 @@ tags:
 - [容器中的 Shim 到底是个什么鬼？](https://cloud.tencent.com/developer/article/1948155)
 - [Containerd深度剖析-runtime篇](https://cloud.tencent.com/developer/article/2154031)
 - [函数式选项(Functional Options)编程模式](https://zhuanlan.zhihu.com/p/436468481)
+- [这才是真正的Git——Git实用技巧](https://zhuanlan.zhihu.com/p/192961725)
