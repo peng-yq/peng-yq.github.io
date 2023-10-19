@@ -35,6 +35,7 @@ tags:
 - [Shebang](https://zh.wikipedia.org/wiki/Shebang)
 - [Linux shell 脚本中， "\$@"和"\$#" 分别是什么意思？](https://blog.csdn.net/qiezikuaichuan/article/details/80014298)
 - [PXE系列文章(16) - Linux /run 和 /var/run 目录介绍](http://www.linuxcoming.com/blog/2019/07/22/linux_run_directory.html)
+- [跟我一起写Makefile](https://seisman.github.io/how-to-write-makefile/index.html)
 
 ## Others
 
