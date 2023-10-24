@@ -27,13 +27,9 @@ tags:
 
 钩子主要有两个关键点，一个是导致钩子调用的事件（某个事件发生前或者发生后），一个是钩子的具体代码。因此，钩子实际上就是在某个时间点或事件点触发的一系列函数或代码。
 
-### hooks in container
+### lifecycle
 
-#### lifecycle
-
-容器中的钩子和容器的生命周期息息相关，钩子能使容器感知其生命周期内的事件，并且当相应的生命周期钩子被调用时运行指定的代码。
-
-[oci runtime-spec](https://github.com/opencontainers/runtime-spec/blob/main/runtime.md#lifecycle)对容器生命周期的描述如下（单纯从低级运行时创建容器开始，不包括镜像）。
+容器中的钩子和容器的生命周期息息相关，钩子能使容器感知其生命周期内的事件，并且当相应的生命周期钩子被调用时运行指定的代码。[oci runtime-spec](https://github.com/opencontainers/runtime-spec/blob/main/runtime.md#lifecycle)对容器生命周期的描述如下（单纯从低级运行时创建容器开始，不包括镜像）。
 
 > The lifecycle describes the timeline of events that happen from when a container is created to when it ceases to exist.
 >
@@ -51,6 +47,22 @@ tags:
 > - The container MUST be destroyed by undoing the steps performed during create phase (step 2).
 > - The poststop hooks MUST be invoked by the runtime. If any poststop hook fails, the runtime MUST log a warning, but the remaining hooks and lifecycle continue as if the hook had succeeded.
 
+Lifecycle定义了容器从创建到退出之间的时间轴：
+
+1. 容器开始创建：**通常为OCI规范运行时（runc）调用create命令+bundle+container id**
+2. 容器运行时环境创建中： 根据容器的config.json中的配置进行创建，此时用户指定程序还未运行，这一步后所有对config.json的更改均不会影响容器
+3. prestart hooks
+4. createRuntime hooks
+5. createContainer hooks
+6. 容器启动：**通常为OCI规范运行时（runc）调用start命令+container id**
+7. startContainer hooks
+8. 容器执行用户指定程序
+9. poststart hooks：任何poststart钩子执行失败只会log a warning，不影响其他生命周期（操作继续执行）就好像钩子成功执行一样
+10. 容器进程退出：error、正常退出和运行时调用kill命令均会导致
+11. 容器删除：**通常为OCI规范运行时（runc）调用delete命令+container id**
+12. 容器摧毁：**区别于容器删除，3、4、5、7的钩子执行失败除了生成一个error外，会直接跳到这一步**。撤销第二步创建阶段执行的操作。
+13. poststop hooks：执行失败后的操作和poststart一致
+
 可以看到oci定义的容器生命周期中，如果在容器的config.json中定义了钩子，runc必须执行钩子，并且时间节点在前的钩子执行成功后才能执行下一个钩子；若有一个钩子执行失败，则会报错并摧毁容器（在容器创建后执行的钩子失败，并不会删除容器，而是启动失败）。
 
 除了上述oci通过runc创建并启动容器的流程来对容器生命周期的描述外，docker和k8s也有各自对容器生命周期的描述（出于容器的不同状态），均符合oci规范。
@@ -61,9 +73,60 @@ Docker
 
 [Pod 的生命周期-K8s](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/#pod-lifetime)
 
-#### oci hooks
+### oci hooks
 
-[oci runtime-spec定义的钩子](https://github.com/opencontainers/runtime-spec/blob/main/config.md#posix-platform-hooks)主要有6个，其中prestart细分成了3个hook，已被废弃。
+结合生命周期来看。
+
+hooks (object, OPTIONAL) ：配置与容器生命周期相关的特定操作，按顺序进行调用：
+
+- prestart (array of objects, OPTIONAL, DEPRECATED) :所有类型的钩子均有相同的键
+  - path (string, REQUIRED) ：绝对路径
+  - args (array of strings, OPTIONAL)
+  - env (array of strings, OPTIONAL) 
+  - timeout (int, OPTIONAL) ：终止钩子的秒数
+- createRuntime (array of objects, OPTIONAL)
+- createContainer (array of objects, OPTIONAL)
+- startContainer (array of objects, OPTIONAL)
+- poststart (array of objects, OPTIONAL)
+- poststop (array of objects, OPTIONAL) 
+
+容器的状态必须通过 stdin 传递给钩子，以便它们可以根据容器的当前状态执行相应的工作。
+
+#### Prestart
+
+Prestart钩子必须作为创建操作的一部分，在运行时环境创建完成后（根据 config.json 中的配置），但在执行 pivot_root 或任何同等操作之前调用。
+
+**废弃，被后面三个钩子所取代**
+
+#### CreateRuntime Hooks
+
+createRuntime钩子必须作为创建操作的一部分，在运行时环境创建完成后（根据 config.json 中的配置），但在执行 pivot_root 或任何同等操作之前调用。
+
+**在容器命名空间被创建后调用**。
+
+> createRuntime 钩子的定义目前未作明确规定，钩子作者只能期望运行时创建挂载命名空间并执行挂载操作。运行时可能尚未执行其他操作，如 cgroups 和 SELinux/AppArmor 标签
+
+#### CreateContainer Hooks
+
+createContainer钩子必须作为创建操作的一部分，在运行时环境创建完成后（根据 config.json 中的配置），但在执行 pivot_root 或任何同等操作之前调用。
+
+**在执行 pivot_root 操作之前，但在创建和设置挂载命名空间之后调用**。
+
+#### StartContainer Hooks
+
+StartContainer钩子作为启动操作的一部分，**必须在执行用户指定的进程之前调用startContainer挂钩**。此钩子可用于在容器中执行某些操作，例如在容器进程生成之前在linux上运行ldconfig二进制文件。
+
+#### Poststart
+
+Poststart钩子**必须在用户指定的进程执行后、启动操作返回前调用**。例如，此钩子可以通知用户容器进程已生成。
+
+#### Poststop
+
+Poststart钩子**必须在容器删除后、删除操作返回前调用**。清理或调试函数就是此类钩子的例子。
+
+#### summary
+
+**namespace是指path以及钩子必须在指定的namespace中解析或调用**。
 
 | Name                    | Namespace | When                                                         |
 | ----------------------- | --------- | ------------------------------------------------------------ |
@@ -73,8 +136,6 @@ Docker
 | `startContainer`        | container | After the start operation is called but before the user-specified program command is executed. |
 | `poststart`             | runtime   | After the user-specified process is executed but before the start operation returns. |
 | `poststop`              | runtime   | After the container is deleted but before the delete operation returns. |
-
-若想在容器的生命周期调用钩子，则需要在容器的config.json中的hooks字段进行定义。
 
 ```json
 "hooks": {
