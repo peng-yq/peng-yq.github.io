@@ -20,7 +20,7 @@ tags:
 
 - [CPU三级Cache](https://zhuanlan.zhihu.com/p/461548456)
 
-## operating systems
+## operating systems & linux
 
 - [通过fork函数来看Linux内存规划](https://blog.csdn.net/lingshengxueyuan/article/details/125007995)
 - [为什么Linux内核常用unsigned long来代替指针](https://blog.csdn.net/Rong_Toa/article/details/109693379)
@@ -41,6 +41,7 @@ tags:
 - [ubuntu中vmware出现：Network configuration is missing. Ensure that /etc/vmware/networking exists.的处理方式](https://blog.csdn.net/u010629326/article/details/50621192)
 - [/bin /usr/bin 和 /usr/local/bin 的故事](https://www.kawabangga.com/posts/3777)
 - [Linux中cd进入一个目录的权限](https://blog.csdn.net/prefect_boy/article/details/65939347)
+- [在Linux中设置UMASK值](https://www.cnblogs.com/wish123/p/7073114.html)
 
 ## open source & git
 
@@ -79,7 +80,8 @@ tags:
 - [容器中的 Shim 到底是个什么鬼？](https://cloud.tencent.com/developer/article/1948155)
 - [Containerd深度剖析-runtime篇](https://cloud.tencent.com/developer/article/2154031)
 
-## others (make to be a good programer)
+## others (be a better programer)
 
 - [JWT (Json Web Token)](https://jwt.io/introduction)
 - [RFC-2119 (words descriptive requirements in the specification)](https://www.rfc-editor.org/rfc/rfc2119.html)
+- [语义化版本 2.0.0](https://semver.org/lang/zh-CN/)
