@@ -42,6 +42,7 @@ tags:
 - [/bin /usr/bin 和 /usr/local/bin 的故事](https://www.kawabangga.com/posts/3777)
 - [Linux中cd进入一个目录的权限](https://blog.csdn.net/prefect_boy/article/details/65939347)
 - [在Linux中设置UMASK值](https://www.cnblogs.com/wish123/p/7073114.html)
+- [namespaces(7) — Linux manual page](https://man7.org/linux/man-pages/man7/namespaces.7.html)
 
 ## open source & git
 
