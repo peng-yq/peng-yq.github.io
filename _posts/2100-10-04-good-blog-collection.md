@@ -47,6 +47,7 @@ tags:
 ## open source & git
 
 - [Git介绍和内容寻址文件系统](https://linianhui.github.io/git/)
+- [Github merkle DAG](https://www.youtube.com/watch?v=ronoCeMzfJ4)
 - [如何参与开源项目 - 细说 GitHub 上的 PR 全过程](https://www.cnblogs.com/daniel-hutao/p/open-a-pr-in-github.html) 
 - [主流开源协议之间有何异同](https://www.zhihu.com/question/19568896/answer/20907890)
 - [这才是真正的Git——Git实用技巧](https://zhuanlan.zhihu.com/p/192961725)
@@ -80,6 +81,12 @@ tags:
 - [关于/var/run/docker.sock那些事儿](https://blog.csdn.net/qq_42997214/article/details/122990008)
 - [容器中的 Shim 到底是个什么鬼？](https://cloud.tencent.com/developer/article/1948155)
 - [Containerd深度剖析-runtime篇](https://cloud.tencent.com/developer/article/2154031)
+- [容器技术原理(五)：文件系统的隔离和共享](https://waynerv.com/posts/container-fundamentals-filesystem-isolation-and-sharing/)
+- [容器技术原理(四)：使用 Capabilities 实现权限控制](https://waynerv.com/posts/container-fundamentals-permission-control-using-capabilities/)
+- [容器技术原理(三)：使用 Cgroups 实现资源限制](https://waynerv.com/posts/container-fundamentals-resource-limitation-using-cgroups/)
+- [容器技术原理(二)：使用 Namespace 实现进程隔离](https://waynerv.com/posts/container-fundamentals-process-isolation-using-namespace/)
+- [容器技术原理(一)：从根本上认识容器镜像](https://waynerv.com/posts/container-fundamentals-learn-container-with-oci-spec/)
+- [A Peek into Docker Images](https://medium.com/tenable-techblog/a-peek-into-docker-images-b4d6b2362eb)
 
 ## others (be a better programer)
 
