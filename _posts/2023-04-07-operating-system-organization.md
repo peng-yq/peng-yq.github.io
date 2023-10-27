@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "xv6—操作系统架构"
-subtitle: "[xv6] Operating system organization"
+title: "MIT 6.S081—操作系统架构"
+subtitle: "Operating system organization"
 author: "PYQ"
 header-mask: 0.3
 mathjax: true

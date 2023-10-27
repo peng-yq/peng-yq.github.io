@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "xv6—页表"
-subtitle: "[xv6] Page Tables"
+title: "MIT 6.S081—页表"
+subtitle: "Page Tables"
 author: "PYQ"
 header-mask: 0.3
 mathjax: true

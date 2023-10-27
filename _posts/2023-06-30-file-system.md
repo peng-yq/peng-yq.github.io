@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "xv6—文件系统"
-subtitle: "[xv6] File System"
+title: "MIT 6.S081—文件系统"
+subtitle: "File System"
 author: "PYQ"
 header-mask: 0.3
 mathjax: true

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: GitHub Contributions
+title: How GitHub contributions counts
 subtitle: why-are-your-contributions-not-showing-up-on-my-profile?
 author: "PYQ"
 header-mask: 0.3

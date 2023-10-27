@@ -1,7 +1,7 @@
 ---
 layout: post
-title: NVIDIA-Container-Toolkit—源码阅读—cmd（runtime/ctk）
-subtitle: NVIDIA-Container-Toolkit—CodeReading—cmd（runtime/ctk）
+title: NVIDIA-Container-Toolkit—源码阅读—ctk
+subtitle: NVIDIA-Container-Toolkit—CodeReading—ctk
 author: "PYQ"
 header-mask: 0.3
 mathjax: true
@@ -9,24 +9,6 @@ catalog: true
 tags:
   - cloud native
 ---
-
-## nvidia-container-runtime
-
-### main.go
-
-main函数很简单，创建一个新的runtime，并执行传入的参数。
-
-```go
-func main() {
-	r := runtime.New()
-	err := r.Run(os.Args)
-	if err != nil {
-		os.Exit(1)
-	}
-}
-```
-
-更多的得去看/internal/runtime
 
 ## nvidia-ctk
 

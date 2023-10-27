@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "xv6—中断和设备驱动"
-subtitle: "[xv6] Interrupts and device drivers"
+title: "MIT 6.S081—中断和设备驱动"
+subtitle: "Interrupts and device drivers"
 author: "PYQ"
 header-mask: 0.3
 mathjax: true

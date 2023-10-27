@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "xv6—trap指令和系统调用"
-subtitle: "[xv6] Traps and system calls"
+title: "MIT 6.S081—trap指令和系统调用"
+subtitle: "Traps and system calls"
 author: "PYQ"
 header-mask: 0.3
 mathjax: true

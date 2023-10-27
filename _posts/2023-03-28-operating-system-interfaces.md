@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "xv6—操作系统接口"
-subtitle: "[xv6] Operating system interfaces"
+title: "MIT 6.S081—操作系统接口"
+subtitle: "Operating system interfaces"
 author: "PYQ"
 header-mask: 0.3
 mathjax: true
