@@ -87,6 +87,7 @@ tags:
 - [容器技术原理(二)：使用 Namespace 实现进程隔离](https://waynerv.com/posts/container-fundamentals-process-isolation-using-namespace/)
 - [容器技术原理(一)：从根本上认识容器镜像](https://waynerv.com/posts/container-fundamentals-learn-container-with-oci-spec/)
 - [A Peek into Docker Images](https://medium.com/tenable-techblog/a-peek-into-docker-images-b4d6b2362eb)
+- [深入理解 Docker](https://marksuper.xyz/2023/02/27/docker/)
 
 ## others (be a better programer)
 
