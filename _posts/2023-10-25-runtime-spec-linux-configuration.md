@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Open Container Initiative Runtime Linux Specification Configuration
+title: OCI Runtime Specification——Linux Configuration
 subtitle: OCI Runtime-Spec/config.json (linux spec)
 author: "PYQ"
 header-mask: 0.3

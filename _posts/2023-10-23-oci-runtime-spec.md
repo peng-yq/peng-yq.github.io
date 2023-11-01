@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Open Container Initiative Runtime Specification
+title: OCI Runtime Specification
 subtitle: OCI Runtime-Spec
 author: "PYQ"
 header-mask: 0.3
