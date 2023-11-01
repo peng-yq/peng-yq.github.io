@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OCI Image Spec——Conversion to OCI Runtime Configuration
+title: OCI Image Specification——Conversion to OCI Runtime Configuration
 subtitle: Conversion to OCI Runtime Configuration
 author: "PYQ"
 header-mask: 0.3

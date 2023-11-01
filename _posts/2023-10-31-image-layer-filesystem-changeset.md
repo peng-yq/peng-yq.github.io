@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OCI Image Spec——Image Layer Filesystem Changeset
+title: OCI Image Specification——Image Layer Filesystem Changeset
 subtitle: OCI Image Layer Filesystem Changeset
 author: "PYQ"
 header-mask: 0.3

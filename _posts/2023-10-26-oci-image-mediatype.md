@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OCI Image Spec——Media Types
+title: OCI Image Specification——Media Types
 subtitle: OCI Image Media Types
 author: "PYQ"
 header-mask: 0.3

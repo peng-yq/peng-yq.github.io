@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OCI Image Spec——Image Manifest Specification
+title: OCI Image Specification——Image Manifest Specification
 subtitle: OCI Image Manifest Specification
 author: "PYQ"
 header-mask: 0.3

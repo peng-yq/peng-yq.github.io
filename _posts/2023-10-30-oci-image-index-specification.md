@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OCI Image Spec——Image Index Specification
+title: OCI Image Specification——Image Index Specification
 subtitle: OCI Image Index Specification
 author: "PYQ"
 header-mask: 0.3

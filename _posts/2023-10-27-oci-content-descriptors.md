@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OCI Image Spec——Content Descriptors
+title: OCI Image Specification——Content Descriptors
 subtitle: OCI Content Descriptors
 author: "PYQ"
 header-mask: 0.3
