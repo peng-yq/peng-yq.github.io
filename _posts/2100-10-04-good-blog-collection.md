@@ -74,7 +74,6 @@ tags:
 ## cloud native
 
 - [Docker的Pull Digest和Image ID](https://developer.aliyun.com/article/57752)
-- [docker imageid 和 digest区别解析](https://www.jb51.net/server/287971i6f.htm)
 - [手撕docker文件结构 —— overlayFS，image，container文件结构详解](https://zhuanlan.zhihu.com/p/374924046)
 - [Docker：commit、export、import、save、load命令的使用](https://blog.51cto.com/u_15127688/4370361)
 - [Docker、Containerd、RunC分别是什么](https://developer.aliyun.com/article/943302)
