@@ -88,6 +88,7 @@ tags:
 - [容器技术原理(一)：从根本上认识容器镜像](https://waynerv.com/posts/container-fundamentals-learn-container-with-oci-spec/)
 - [A Peek into Docker Images](https://medium.com/tenable-techblog/a-peek-into-docker-images-b4d6b2362eb)
 - [深入理解 Docker](https://marksuper.xyz/2023/02/27/docker/)
+- [docker 在本地如何管理 image（镜像）? --探索 image 的获取和存储方式](http://www.asznl.com/post/25)
 
 ## others (be a better programer)
 
