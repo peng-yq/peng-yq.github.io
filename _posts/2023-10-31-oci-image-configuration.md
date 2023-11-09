@@ -35,7 +35,7 @@ tags:
 
 **注意：不要将Layer DiffID与layer digest（manifest中的）混淆，后者是压缩或未压缩内容的摘要**。
 
-> 也就是说layer digest是对每一层实际内容做sha256计算所得，而layer diffid是对其tar包做sha256计算
+> 也就是说layer digest是对layer的MediaType（也就是说media type是tar+gzip，那digest就是layer的tar包经过gzip压缩后的内容的sha256，如果media type就是tar的话，diffid和digest就会一样）做sha256计算所得，而layer diffid是对其tar包做sha256计算
 
 #### Layer ChainID
 

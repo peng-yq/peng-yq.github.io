@@ -35,7 +35,7 @@ image manifest：
   - **`size`**
 - **`layers`** *array of objects*：包含的每一个对象都是descriptor描述符类型，至少包含一个layer
   - **`mediaType`** *string*
-  - **`digest`**
+  - **`digest`**：对mediaType类型的layer做sha256计算得到的值
   - **`size`**
 
 > 当config.mediaType的值为application/vnd.oci.image.config.v1+json时，layers必须满足以下要求：
