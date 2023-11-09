@@ -50,11 +50,11 @@ ChainID(L₀) =  DiffID(L₀)
 ChainID(L₀|...|Lₙ₋₁|Lₙ) = Digest(ChainID(L₀|...|Lₙ₋₁) + " " + DiffID(Lₙ))
 ```
 
-|：将右操作数应用于左操作数的结果。例如，给定base layer（基础层）A 和changeset（变更集）B，我们将B应用于A的结果称为A|B。digest为做sha256计算。
+\|：将右操作数应用于左操作数的结果。例如，给定base layer（基础层）A 和changeset（变更集）B，我们将B应用于A的结果称为A\|B。digest为做sha256计算。
 
 ##### Explanation
 
-假如有3层A、B和C，顺序从底到顶，A为最底层，C为最高层，三个层的chainID（准确来说，高层的chainid是其前面多个层相作用的结果，也就是说ChainID(A|B|C)和ChainID(C)是不一样的）计算方式如下：
+假如有3层A、B和C，顺序从底到顶，A为最底层，C为最高层，三个层的chainID（准确来说，高层的chainid是其前面多个层相作用的结果，也就是说ChainID(A\|B\|C)和ChainID(C)是不一样的）计算方式如下：
 
 ```shell
 ChainID(A) = DiffID(A)
