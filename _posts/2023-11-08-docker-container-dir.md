@@ -503,3 +503,5 @@ bin  boot  dev  etc  home  lib  lib32  lib64  libx32  media  mnt  opt  proc  roo
 容器中的所有对文件的改动都会记录存储在这个目录，同样的直接在这个目录添加或者修改文件，也会同步在容器中。
 
 `/var/lib/docker/overlay2/\<mount-id>/merged`目录只会在容器运行时存在（挂载）。
+
+`diff`目录记录对文件的修改。
