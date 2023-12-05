@@ -19,17 +19,13 @@
 #### **💻 我的设备**
 
 1. HUAWEI  MateBook 13
-2. HUAWEI  Mate 40
-3. HUAWEI  FreeBuds Pro
-4. HUAWEI  Band6
-5. HUAWEI  Watch GT2 42mm
-6. Apple  iPad 2020
-7. Apple iPhone 5C
-8. Apple iPhone SE
-9. FL  980
-10. Logitech  G102 ( Purple )
-11. Logitech  K380 ( Red)
-12. Logitech  M590
+2. HUAWEI  Watch GT2 42mm
+3. Apple  iPad 2020
+4. Apple iPhone 12
+5. FL  980
+6. Logitech  G102 ( Purple )
+7. Logitech  K380 ( Red)
+8. Logitech  M590
 13. OPPO Enco x
 
 #### **💌 联系我**
