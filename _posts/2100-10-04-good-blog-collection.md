@@ -89,6 +89,8 @@ tags:
 - [A Peek into Docker Images](https://medium.com/tenable-techblog/a-peek-into-docker-images-b4d6b2362eb)
 - [深入理解 Docker](https://marksuper.xyz/2023/02/27/docker/)
 - [docker 在本地如何管理 image（镜像）? --探索 image 的获取和存储方式](http://www.asznl.com/post/25)
+- [learn-k8s-from-scratch](https://learn-k8s-from-scratch.readthedocs.io/en/latest/introduction.html)
+- [将节点上的容器运行时从 Docker Engine 改为 containerd](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/migrating-from-dockershim/change-runtime-containerd/)
 
 ## others (be a better programer)
 
