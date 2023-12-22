@@ -97,3 +97,5 @@ tags:
 - [JWT (Json Web Token)](https://jwt.io/introduction)
 - [RFC-2119 (words descriptive requirements in the specification)](https://www.rfc-editor.org/rfc/rfc2119.html)
 - [语义化版本 2.0.0](https://semver.org/lang/zh-CN/)
+- [The Free Lunch Is Over: A Fundamental Turn Toward Concurrency in Software](http://www.gotw.ca/publications/concurrency-ddj.htm)
+- [Rob Pike：并发 vs 并行 ](https://www.bilibili.com/video/BV1EN411o7FY/)
