@@ -91,6 +91,7 @@ tags:
 - [docker 在本地如何管理 image（镜像）? --探索 image 的获取和存储方式](http://www.asznl.com/post/25)
 - [learn-k8s-from-scratch](https://learn-k8s-from-scratch.readthedocs.io/en/latest/introduction.html)
 - [将节点上的容器运行时从 Docker Engine 改为 containerd](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/migrating-from-dockershim/change-runtime-containerd/)
+- [一文搞懂容器运行时 Containerd](https://www.qikqiak.com/post/containerd-usage/)
 
 ## others (be a better programer)
 
@@ -99,3 +100,4 @@ tags:
 - [语义化版本 2.0.0](https://semver.org/lang/zh-CN/)
 - [The Free Lunch Is Over: A Fundamental Turn Toward Concurrency in Software](http://www.gotw.ca/publications/concurrency-ddj.htm)
 - [Rob Pike：并发 vs 并行 ](https://www.bilibili.com/video/BV1EN411o7FY/)
+- [硬编码](https://zh.wikipedia.org/wiki/%E5%AF%AB%E6%AD%BB)
