@@ -92,6 +92,9 @@ tags:
 - [learn-k8s-from-scratch](https://learn-k8s-from-scratch.readthedocs.io/en/latest/introduction.html)
 - [将节点上的容器运行时从 Docker Engine 改为 containerd](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/migrating-from-dockershim/change-runtime-containerd/)
 - [一文搞懂容器运行时 Containerd](https://www.qikqiak.com/post/containerd-usage/)
+- [How Docker Works - Intro to Namespaces](https://www.youtube.com/watch?v=-YnMr1lj4Z8&t=74s&ab_channel=LiveOverflow)
+- [What process is the parent process of containerd-shim?](https://stackoverflow.com/questions/67585798/what-process-is-the-parent-process-of-containerd-shim)
+- [Implementing Container Runtime Shim: runc](https://iximiuz.com/en/posts/implementing-container-runtime-shim/)
 
 ## others (be a better programer)
 
