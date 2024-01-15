@@ -44,6 +44,7 @@ tags:
 - [在Linux中设置UMASK值](https://www.cnblogs.com/wish123/p/7073114.html)
 - [namespaces(7) — Linux manual page](https://man7.org/linux/man-pages/man7/namespaces.7.html)
 - [What's the "p" permission found on /var/run/screen/ ...?](https://stackoverflow.com/questions/19780783/whats-the-p-permission-found-on-var-run-screen)
+- [ 深入揭秘 epoll 是如何实现 IO 多路复用的！](https://mp.weixin.qq.com/s/OmRdUgO1guMX76EdZn11UQ)
 
 ## open source & git
 
