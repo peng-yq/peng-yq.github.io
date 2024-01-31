@@ -65,6 +65,7 @@ tags:
 - [c++中的cout.setf()函数](https://blog.csdn.net/baishuiniyaonulia/article/details/79144033)，[官方文档](https://cplusplus.com/reference/ios/ios_base/fmtflags/)
 - [C++继承和动态分配](https://blog.csdn.net/qq_36607894/article/details/105116525)
 - [跟我一起写Makefile](https://seisman.github.io/how-to-write-makefile/index.html)
+- [C++单例模式](https://www.cnblogs.com/sunchaothu/p/10389842.html)
 
 ## golang
 
