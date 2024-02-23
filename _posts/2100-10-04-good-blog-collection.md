@@ -97,6 +97,11 @@ tags:
 - [How Docker Works - Intro to Namespaces](https://www.youtube.com/watch?v=-YnMr1lj4Z8&t=74s&ab_channel=LiveOverflow)
 - [What process is the parent process of containerd-shim?](https://stackoverflow.com/questions/67585798/what-process-is-the-parent-process-of-containerd-shim)
 - [Implementing Container Runtime Shim: runc](https://iximiuz.com/en/posts/implementing-container-runtime-shim/)
+- [源码解析：K8s 创建 pod 时，背后发生了什么（一）（2021）](https://arthurchiao.art/blog/what-happens-when-k8s-creates-pods-1-zh/)
+- [源码解析：K8s 创建 pod 时，背后发生了什么（二）（2021）](https://arthurchiao.art/blog/what-happens-when-k8s-creates-pods-2-zh/)
+- [源码解析：K8s 创建 pod 时，背后发生了什么（三）（2021）](https://arthurchiao.art/blog/what-happens-when-k8s-creates-pods-3-zh/)
+- [源码解析：K8s 创建 pod 时，背后发生了什么（四）（2021）](https://arthurchiao.art/blog/what-happens-when-k8s-creates-pods-4-zh/)
+- [源码解析：K8s 创建 pod 时，背后发生了什么（五）（2021）](https://arthurchiao.art/blog/what-happens-when-k8s-creates-pods-5-zh/)
 
 ## others (be a better programer)
 
