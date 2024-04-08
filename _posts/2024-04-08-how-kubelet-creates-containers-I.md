@@ -426,7 +426,7 @@ func (kl *Kubelet) Run(updates <-chan kubetypes.PodUpdate) {
   - `the pods directory `
   - `the plugins directory `
   - `the pod-resources directory `
-- ` ContainerLogsDir` ，创建容器日志目录（`/var/log/containers`）。
+- `ContainerLogsDir` ，创建容器日志目录（`/var/log/containers`）。
 - `imageManager.Start()` ，启动镜像管理器。
 - `serverCertificateManager.Start() `，启动证书管理器。
 - `oomWatcher.Start()` ，启动`oom`监听器。
