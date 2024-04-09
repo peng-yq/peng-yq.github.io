@@ -10,7 +10,7 @@ tags:
   - cloud native
 ---
 
-Kubernetes官方提供了十分详细且完整的[教程](https://kubernetes.io/zh-cn/docs/tutorials/kubernetes-basics/)，完整的去阅读学习下来需要耗费大量的时间。本篇博客旨在阅读者可以快速入门和上手使用Kubernetes，只对基本的内容进行记录（不包括使用部分，都放一篇内容太多了x），更多细节可以翻阅官方手册对应部分。
+Kubernetes官方提供了十分详细且完整的[教程](https://kubernetes.io/zh-cn/docs/tutorials/kubernetes-basics/)，完整的去阅读学习下来需要耗费大量的时间。本篇博客旨在帮助阅读者可以快速入门和上手使用Kubernetes，只对基本的内容进行记录（不包括使用部分，都放一篇内容太多了x），更多细节可以翻阅官方手册对应部分。
 
 参考的视频教程：[Kubernetes一小时轻松入门——GeekHour](https://www.youtube.com/watch?v=SL83f7Nzxr0)
 
