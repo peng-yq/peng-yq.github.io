@@ -102,6 +102,7 @@ tags:
 - [源码解析：K8s 创建 pod 时，背后发生了什么（三）（2021）](https://arthurchiao.art/blog/what-happens-when-k8s-creates-pods-3-zh/)
 - [源码解析：K8s 创建 pod 时，背后发生了什么（四）（2021）](https://arthurchiao.art/blog/what-happens-when-k8s-creates-pods-4-zh/)
 - [源码解析：K8s 创建 pod 时，背后发生了什么（五）（2021）](https://arthurchiao.art/blog/what-happens-when-k8s-creates-pods-5-zh/)
+- [从 Pause 容器理解 Pod 的本质](https://k8s.iswbm.com/c02/p02_learn-kubernetes-pod-via-pause-container.html)
 
 ## others (be a better programer)
 
