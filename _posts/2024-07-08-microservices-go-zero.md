@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Microservices Go-Zero
+title: "Microservices Go-Zero"
 subtitle: "Introduction to microservices-go-zero"
 author: "PYQ"
 header-mask: 0.3
@@ -12,7 +12,7 @@ tags:
 
 ## 概览
 
-本文是对个人项目 [Slim Web Server的详细介绍](https://github.com/peng-yq/slim-web-server)。
+本文是对个人项目 [microservices-go-zero的详细介绍](https://github.com/peng-yq/microservices-go-zero)。
 
 `microservices-go-zero`基于`go-zero`的民宿微服务系统，包括用户中心服务、民宿服务、订单服务和支付服务。
 
