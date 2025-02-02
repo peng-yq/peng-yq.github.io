@@ -1,5 +1,7 @@
 # PYQ的Blog | PYQ Blog
 
+**本仓库不再更新，将博客整体搬迁到了astro + vercel，新的[链接](pengyq.dev)**。
+
 ![image-20220611131628941](https://cdn.jsdelivr.net/gh/peng-yq/Gallery/img/202206111316495.png)
 
 ## [Manual_CN](https://github.com/peng-yq/peng-yq.github.io/blob/main/_doc/Manual_zh.md)👈
